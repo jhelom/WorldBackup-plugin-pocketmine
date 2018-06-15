@@ -208,7 +208,13 @@ class WorldBackupService
      */
     private function getBackupFolder(): string
     {
-        return Main::getInstance()->getDataFolder() . self::BACKUP_FOLDER;
+        $dir = Main::getInstance()->getDataFolder() . self::BACKUP_FOLDER;
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        return $dir;
     }
 
     /**
