@@ -4,7 +4,7 @@ command-invoke-on-player: '§cこのコマンドはゲームから実行して�
 
 description: 'ワールドのバックアップと復元'
 
-help1: '=== wbackup コマンドヘルプ ==='
+help1: '=== World Backup コマンドヘルプ ==='
 help2: '§a/wbackup list §f: 一覧を見る'
 help3: '§a/wbackup backup [world] §f: バックアップする'
 help4: '§a/wbackup restore [world] [history] §f: 復元する'
@@ -12,8 +12,8 @@ help5: '§a/wbackup history [world] §f: 履歴一覧を見る'
 help6: '§a/wbackup set §f: 設定を見る'
 help7: '§a/wbackup set max [int] §f: 履歴数上限を設定する'
 
-world-required: 'ワールドを指定してください。'
-world-not-found: 'ワールド "{0}" は存在しません。'
+world-required: '§cワールドを指定してください。'
+world-not-found: '§cワールド "{0}" は存在しません。'
 world-invalid: '§cワールド名が不正です。'
 
 history-invalid: '§cバックアック履歴番号は1以上の数字で指定してください。'
@@ -28,7 +28,7 @@ set-max-invalid: '§cバックアップ履歴数上限を指定してくださ�
 set-max-completed: '§aバックアップ履歴数上限を {0} に設定しました。'
 
 restore-teleport: 'ワールド "{0}" を復元するためテレポートさせられました。'
-restore-logout: 'ワールド "{0}" は復元するためにログアウトさせられました。'
+restore-logout: 'ワールド "{0}" を復元するためにログアウトさせられました。'
 restore-completed: '§aワールド "{0}" を履歴 "{1}" から復元しました。'
 
 auto-backup-start: '§a全ワールドの自動バックアップを開始しました。'
