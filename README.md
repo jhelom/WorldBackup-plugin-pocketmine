@@ -1,1 +1,1 @@
-# WorldBackup-plugin-pocketmine
+# WorldBackup-PocketMine

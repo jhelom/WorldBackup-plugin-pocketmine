@@ -1,0 +1,58 @@
+command-prohibited: '§eこのコマンドは禁止されています。'
+command-invoke-on-console: '§cこのコマンドはサーバーコンソールから実行してください'
+command-invoke-on-player: '§cこのコマンドはゲームから実行してください。'
+
+description: 'ワールドのバックアップと復元'
+
+help1: '=== wbackup コマンドヘルプ ==='
+help2: '§a/wbackup list §f: 一覧を見る'
+help3: '§a/wbackup backup [world] §f: バックアップする'
+help4: '§a/wbackup restore [world] [history] §f: 復元する'
+help5: '§a/wbackup history [world] §f: 履歴一覧を見る'
+help6: '§a/wbackup set §f: 設定を見る'
+help7: '§a/wbackup set max [int] §f: 履歴数上限を設定する'
+
+world-required: 'ワールドを指定してください。'
+world-not-found: 'ワールド "{0}" は存在しません。'
+world-invalid: '§cワールド名が不正です。'
+
+history-invalid: '§cバックアック履歴番号は1以上の数字で指定してください。'
+history-required: '§c履歴を指定してください。'
+history-not-found: '§cワールド "{0}" のバックアック履歴番号 {1} が存在しません。'
+history-list: 'ワールド "{0}" のバックアップ履歴一覧'
+
+backup-completed: '§aワールド "{0}" をバックアップしました。'
+
+set-max: 'バックアップ履歴数上限 = {0}'
+set-max-invalid: '§cバックアップ履歴数上限を指定してください。'
+set-max-completed: '§aバックアップ履歴数上限を {0} に設定しました。'
+
+restore-teleport: 'ワールド "{0}" を復元するためテレポートさせられました。'
+restore-logout: 'ワールド "{0}" は復元するためにログアウトさせられました。'
+restore-completed: '§aワールド "{0}" を履歴 "{1}" から復元しました。'
+
+auto-backup-start: '§a全ワールドの自動バックアップを開始しました。'
+auto-backup-end: '§a全ワールドの自動バックアップが完了しました。'
+
+form-backup-confirm-title: 'バックアップの確認'
+form-backup-confirm-content: 'ワールド "{0}" をバックアップしますか？'
+
+form-backup-title: 'ワールドのバックアップ'
+form-backup-content: 'バックアップしたいワールドを選択してください。'
+
+form-restore-confirm-title: '復元の確認'
+form-restore-confirm-content: 'ワールド "{0}" をバックアップ履歴 {1} ({2}) から復元しますか？'
+
+form-restore-title: 'ワールドの復元'
+form-restore-content: 'バックアップから復元したいワールドを選択してください。'
+
+form-restore-history-title: '復元する履歴の選択'
+form-restore-history-content: '復元するワールド "{0}" の履歴を選択してください。'
+
+form-settings-title: 'バックアップ設定'
+
+form-top-title: 'ワールドのバックアップと復元'
+form-top-backup-button: 'バックアップする'
+form-top-restore-button: '復元する'
+form-top-settings-button: '設定'
+form-top-quit-button: '終了'
