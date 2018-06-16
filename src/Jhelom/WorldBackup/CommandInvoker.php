@@ -13,20 +13,46 @@ use pocketmine\plugin\Plugin;
  * Class CommandInvoker
  * @package Jhelom\WorldBackup
  */
-abstract class CommandInvoker extends PluginCommand implements CommandExecutor
+abstract class CommandInvoker implements CommandExecutor
 {
+    /** @var Plugin */
     private $plugin;
+
+    /** @var PluginCommand */
+    private $command;
+
+    /** @var string */
+    private $name;
 
     /**
      * CommandInvoker constructor.
      * @param string $name
-     * @param Plugin $owner
+     * @param Plugin $plugin
      */
-    public function __construct(string $name, Plugin $owner)
+    public function __construct(string $name, Plugin $plugin)
     {
-        parent::__construct($name, $owner);
-        $this->plugin = $owner;
-        $this->setExecutor($this);
+        $this->plugin = $plugin;
+        $this->name = $name;
+        $this->command = new class($name, $plugin) extends PluginCommand
+        {
+        };
+        $this->command->setExecutor($this);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return PluginCommand
+     */
+    public function getCommand(): PluginCommand
+    {
+        return $this->command;
     }
 
     /**

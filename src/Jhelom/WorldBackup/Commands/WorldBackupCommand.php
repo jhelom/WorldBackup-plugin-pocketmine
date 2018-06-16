@@ -22,17 +22,18 @@ use pocketmine\plugin\Plugin;
  */
 class WorldBackupCommand extends CommandInvoker
 {
+    private const COMMAND_NAME = 'wbackup';
+
     /**
      * WorldBackupCommand constructor.
-     * @param string $name
      * @param Plugin $owner
      */
-    public function __construct(string $name, Plugin $owner)
+    public function __construct(Plugin $owner)
     {
-        parent::__construct($name, $owner);
-        $this->setUsage('/wbackup [list|backup|restore|history|set]');
-        $this->setDescription(Messages::commandDescription());
-        $this->setPermission('Jhelom.command.wbackup');
+        parent::__construct(self::COMMAND_NAME, $owner);
+        $this->getCommand()->setUsage('/wbackup [list|backup|restore|history|set]');
+        $this->getCommand()->setDescription(Messages::commandDescription());
+        $this->getCommand()->setPermission('Jhelom.command.wbackup');
     }
 
     /**

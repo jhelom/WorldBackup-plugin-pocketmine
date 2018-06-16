@@ -24,7 +24,7 @@ class Main extends PluginBase implements Listener
 {
     private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
     private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
-    private const COMMAND_WORLD_BACKUP = 'wbackup';
+
     /** @var Main */
     static private $instance;
     /** @var Config */
@@ -41,7 +41,7 @@ class Main extends PluginBase implements Listener
 
     public function onLoad()
     {
-        $this->getLogger()->info(TextFormat::GREEN . 'onLoad');
+        $this->getLogger()->debug(TextFormat::GREEN . 'onLoad');
         Main::$instance = $this;
     }
 
@@ -50,9 +50,9 @@ class Main extends PluginBase implements Listener
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
         $updater->update();
 
-        $this->getLogger()->info(TextFormat::GREEN . 'onEnable');
+        $this->getLogger()->debug(TextFormat::GREEN . 'onEnable');
 
-        // data
+        // folder
 
         $dir = $this->getDataFolder();
 
@@ -71,6 +71,11 @@ class Main extends PluginBase implements Listener
         // messages
 
         $message_file = $this->getDataFolder() . 'messages.' . $this->getServer()->getLanguage()->getLang() . '.yml';
+
+        if (!is_file($message_file)) {
+            $message_file = $this->getDataFolder() . 'messages.eng.yml';
+        }
+
         Messages::load($message_file);
 
         // task
@@ -78,10 +83,11 @@ class Main extends PluginBase implements Listener
         $this->task = new TimerTask();
         $interval = 1200 * 60; // 1 minutes * 60 = 1 hour
 
+        // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
             $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         } else {
-            $this->getLogger()->warning('Scheduler = Server');
+            Log::debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
             $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         }
@@ -97,13 +103,15 @@ class Main extends PluginBase implements Listener
 
     private function setupCommands(): void
     {
-        /** @var CommandInvoker */
-        $commands = [
-            new WorldBackupCommand(self::COMMAND_WORLD_BACKUP, $this)
+        /** @var CommandInvoker[] */
+        $invokers = [
+            new WorldBackupCommand($this)
         ];
 
-        foreach ($commands as $command) {
-            $this->getServer()->getCommandMap()->register($command->getName(), $command);
+        foreach ($invokers as $invoker) {
+            if ($invoker instanceof CommandInvoker) {
+                $this->getServer()->getCommandMap()->register($invoker->getName(), $invoker->getCommand());
+            }
         }
     }
 
