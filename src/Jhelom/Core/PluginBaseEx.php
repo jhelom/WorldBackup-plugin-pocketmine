@@ -18,7 +18,7 @@ abstract class PluginBaseEx extends PluginBase
 
         parent::onEnable();
 
-        Logging::init($this);
+        Logging::setLogger($this->getLogger());
 
         $dir = $this->getDataFolder();
 

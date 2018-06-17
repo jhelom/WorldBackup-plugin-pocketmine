@@ -372,6 +372,7 @@ class WorldBackupService
             throw new ServiceException(Messages::historyNotFound($world, $historyNumber));
         }
 
+        $sourceDir = $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
         $backupDir = $this->getBackupFolder() . DIRECTORY_SEPARATOR . $world . DIRECTORY_SEPARATOR . $date;
 
         if (!is_dir($backupDir)) {
@@ -389,18 +390,22 @@ class WorldBackupService
                 $server->generateLevel($tempWorld);
                 $server->loadLevel($tempWorld);
                 $tempLevel = Server::getInstance()->getLevelByName($tempWorld);
+
                 $server->setDefaultLevel($tempLevel);
 
-                foreach ($level->getPlayers() as $player) {
-                    $player->kick(Messages::restoreLogout($world), false);
+                try {
+                    foreach ($level->getPlayers() as $player) {
+                        $player->kick(Messages::restoreLogout($world), false);
+                    }
+
+                    $server->unloadLevel($level, true);
+                    $this->deleteDirectories($sourceDir);
+                    $this->copyDirectories($backupDir, $sourceDir);
+                } finally {
+                    $server->loadLevel($world);
+                    $level = Server::getInstance()->getLevelByName($world);
+                    $server->setDefaultLevel($level);
                 }
-
-                $level->unload(true);
-
-                $this->copyDirectories($backupDir, $sourceDir);
-                $server->loadLevel($world);
-                $level = Server::getInstance()->getLevelByName($world);
-                $server->setDefaultLevel($level);
 
                 foreach ($tempLevel->getPlayers() as $player) {
                     $player->teleport($spawnLocation);
@@ -408,7 +413,7 @@ class WorldBackupService
                 }
 
                 $server->unloadLevel($tempLevel, true);
-                $this->deleteDirectories($this->getSourceFolder() . $tempWorld);
+                $this->deleteDirectories($this->getSourceFolder() . DIRECTORY_SEPARATOR . $tempWorld);
             } else {
 
                 foreach ($level->getPlayers() as $player) {
@@ -416,7 +421,7 @@ class WorldBackupService
                     $player->sendMessage(Messages::restoreTeleport($world));
                 }
 
-                $level->unload(true);
+                $server->unloadLevel($level, true);
 
                 try {
                     $this->copyDirectories($backupDir, $sourceDir);

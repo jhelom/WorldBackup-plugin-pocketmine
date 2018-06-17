@@ -5,7 +5,6 @@ namespace Jhelom\Core;
 
 use Exception;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\TextFormat;
 
 /**
  * Class PluginUpdater
@@ -86,14 +85,14 @@ class PluginUpdater
             }
 
             $currentVersion = str_replace(' ', '_', $this->plugin->getDescription()->getFullName()) . '.phar';
-            $this->info($this->getMessage('check', $currentVersion));
+            Logging::info($this->getMessage('check', $currentVersion));
 
             $this->settings[self::LAST_CHECK_DATE] = $now;
             $html = $this->getHtml();
             $result = $this->parseHtml($html);
 
             if (is_null($result)) {
-                $this->info($this->getMessage('latest', $currentVersion));
+                Logging::info($this->getMessage('latest', $currentVersion));
                 return;
             }
 
@@ -101,30 +100,30 @@ class PluginUpdater
             $downloadVersion = $this->parseFilename($downloadUrl);
 
             if (is_null($downloadVersion)) {
-                $this->info($this->getMessage('latest', $currentVersion));
+                Logging::info($this->getMessage('latest', $currentVersion));
                 return;
             }
 
             if ($currentVersion == $downloadVersion) {
-                $this->info($this->getMessage('latest', $currentVersion));
+                Logging::info($this->getMessage('latest', $currentVersion));
             } else {
-                $this->info($this->getMessage('outdated', $currentVersion, $downloadVersion));
+                Logging::info($this->getMessage('outdated', $currentVersion, $downloadVersion));
                 $save_path = $this->downloadDirectory . DIRECTORY_SEPARATOR . $downloadVersion;
 
-                $this->info($this->getMessage('download_start', $downloadVersion));
+                Logging::info($this->getMessage('download_start', $downloadVersion));
                 $this->download($downloadUrl, $save_path);
-                $this->info($this->getMessage('download_end', $downloadVersion));
+                Logging::info($this->getMessage('download_end', $downloadVersion));
 
                 $old_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $currentVersion;
                 $new_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $downloadVersion;
 
                 if (is_file($old_plugin_path)) {
                     unlink($old_plugin_path);
-                    $this->info($this->getMessage('deleted', $currentVersion));
+                    Logging::info($this->getMessage('deleted', $currentVersion));
                 }
 
                 rename($save_path, $new_plugin_path);
-                $this->info($this->getMessage('updated', $downloadVersion));
+                Logging::info($this->getMessage('updated', $downloadVersion));
 
                 $this->settings[self::DOWNLOAD_VERSION] = $downloadVersion;
             }
@@ -151,14 +150,6 @@ class PluginUpdater
     private function getSettingsFilename(): string
     {
         return $this->downloadDirectory . DIRECTORY_SEPARATOR . 'updater.json';
-    }
-
-    /**
-     * @param string $message
-     */
-    private function info(string $message): void
-    {
-        $this->plugin->getLogger()->info(TextFormat::GREEN . $message);
     }
 
     /**

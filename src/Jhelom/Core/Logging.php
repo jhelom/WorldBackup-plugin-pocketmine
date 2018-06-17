@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Jhelom\Core;
 
 use Exception;
-use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginLogger;
+use Logger;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
+
 
 /**
  * Class Logging
@@ -13,15 +15,15 @@ use pocketmine\plugin\PluginLogger;
  */
 class Logging
 {
-    /** @var Plugin */
-    static private $plugin;
+    /** @var Logger */
+    static private $logger = null;
 
     /**
-     * @param Plugin $plugin
+     * @param Logger $logger
      */
-    static public function init(Plugin $plugin): void
+    static public function setLogger(Logger $logger): void
     {
-        self::$plugin = $plugin;
+        self::$logger = $logger;
     }
 
     /**
@@ -30,15 +32,19 @@ class Logging
      */
     static public function debug(string $message, ... $args): void
     {
-        self::getLogger()->debug(StringFormat::formatEx($message, $args));
+        self::getLogger()->debug(TextFormat::GRAY . StringFormat::formatEx($message, $args));
     }
 
     /**
-     * @return PluginLogger
+     * @return Logger
      */
-    static public function getLogger(): PluginLogger
+    static public function getLogger(): Logger
     {
-        return self::$plugin->getLogger();
+        if (is_null(self::$logger)) {
+            return Server::getInstance()->getLogger();
+        }
+
+        return self::$logger;
     }
 
     /**
@@ -47,7 +53,7 @@ class Logging
      */
     static public function info(string $message, ... $args): void
     {
-        self::getLogger()->info(StringFormat::formatEx($message, $args));
+        self::getLogger()->info(TextFormat::GREEN . StringFormat::formatEx($message, $args));
     }
 
     /**
@@ -56,7 +62,7 @@ class Logging
      */
     static public function warning(string $message, ... $args): void
     {
-        self::getLogger()->warning(StringFormat::formatEx($message, $args));
+        self::getLogger()->warning(TextFormat::YELLOW . StringFormat::formatEx($message, $args));
     }
 
     /**
@@ -65,7 +71,7 @@ class Logging
      */
     static public function error(string $message, ... $args): void
     {
-        self::getLogger()->error(StringFormat::formatEx($message, $args));
+        self::getLogger()->error(TextFormat::RED . StringFormat::formatEx($message, $args));
     }
 
     /**

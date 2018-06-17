@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 use Jhelom\Core\Forms\Form;
-use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
@@ -71,15 +70,15 @@ class Main extends PluginBaseEx implements Listener
         // task
 
         $this->task = new TimerTask();
-        $interval = 1200 * 60; // 1 minutes * 60 = 1 hour
+        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 24 = 12 hour
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
-            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
+            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
         } else {
-            Logging::debug('Scheduler = Server');
+            $this->getLogger()->debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
+            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
         }
 
         // register
@@ -101,12 +100,18 @@ class Main extends PluginBaseEx implements Listener
         Form::purge($event->getPlayer()->getLowerCaseName());
     }
 
+    public function onDisable()
+    {
+        parent::onDisable();
+        $this->getLogger()->info('§aonDisable');
+    }
+
     /**
      * @param LevelLoadEvent $event
      */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        $this->getLogger()->debug('LevelLoadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->info('§aLevelLoadEvent:' . $event->getLevel()->getName());
     }
 
     /**
@@ -114,7 +119,7 @@ class Main extends PluginBaseEx implements Listener
      */
     public function onLevelUnload(LevelUnloadEvent $event)
     {
-        $this->getLogger()->debug('LevelUnloadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->info('§aLevelUnloadEvent:' . $event->getLevel()->getName());
     }
 
     /**
