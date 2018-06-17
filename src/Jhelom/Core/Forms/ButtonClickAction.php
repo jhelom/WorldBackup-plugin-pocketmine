@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Forms;
+namespace Jhelom\Core\Forms;
 
 
 use pocketmine\Player;
 
 /**
  * Class ButtonClickAction
- * @package Jhelom\WorldBackup\Forms
+ * @package Jhelom\Core\Forms
  */
 abstract class ButtonClickAction
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\BackupForms;
 
 
-use Jhelom\WorldBackup\Forms\ModalForm;
-use Jhelom\WorldBackup\Forms\ModalFormAction;
+use Jhelom\Core\Forms\ModalForm;
+use Jhelom\Core\Forms\ModalFormAction;
 use Jhelom\WorldBackup\Messages;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\Player;

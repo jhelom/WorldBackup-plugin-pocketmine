@@ -3,24 +3,23 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup;
 
+use Jhelom\Core\Forms\Form;
+use Jhelom\Core\Logging;
+use Jhelom\Core\PluginBaseEx;
+use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
-use Jhelom\WorldBackup\Forms\Form;
-use Jhelom\WorldBackup\Utils\Log;
-use Jhelom\WorldBackup\Utils\PluginUpdater;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\level\LevelUnloadEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
  * @package Jhelom\WorldBackup
  */
-class Main extends PluginBase implements Listener
+class Main extends PluginBaseEx implements Listener
 {
     private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
     private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
@@ -41,24 +40,15 @@ class Main extends PluginBase implements Listener
 
     public function onLoad()
     {
-        $this->getLogger()->debug(TextFormat::GREEN . 'onLoad');
         Main::$instance = $this;
     }
 
     public function onEnable()
     {
+        parent::onEnable();
+
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
         $updater->update();
-
-        $this->getLogger()->debug(TextFormat::GREEN . 'onEnable');
-
-        // folder
-
-        $dir = $this->getDataFolder();
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
 
         // config
 
@@ -87,7 +77,7 @@ class Main extends PluginBase implements Listener
         if (method_exists($this, 'getScheduler')) {
             $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         } else {
-            Log::debug('Scheduler = Server');
+            Logging::debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
             $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         }
@@ -98,26 +88,9 @@ class Main extends PluginBase implements Listener
 
         // setup commands
 
-        $this->setupCommands();
-    }
-
-    private function setupCommands(): void
-    {
-        /** @var CommandInvoker[] */
-        $invokers = [
+        $this->setupCommands([
             new WorldBackupCommand($this)
-        ];
-
-        foreach ($invokers as $invoker) {
-            if ($invoker instanceof CommandInvoker) {
-                $this->getServer()->getCommandMap()->register($invoker->getName(), $invoker->getCommand());
-            }
-        }
-    }
-
-    public function onDisable()
-    {
-        $this->getLogger()->info(TextFormat::GREEN . 'onDisable');
+        ]);
     }
 
     /**
@@ -133,16 +106,15 @@ class Main extends PluginBase implements Listener
      */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        Log::debug('LevelLoadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->debug('LevelLoadEvent:' . $event->getLevel()->getName());
     }
-
 
     /**
      * @param LevelUnloadEvent $event
      */
     public function onLevelUnload(LevelUnloadEvent $event)
     {
-        Log::debug('LevelUnloadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->debug('LevelUnloadEvent:' . $event->getLevel()->getName());
     }
 
     /**

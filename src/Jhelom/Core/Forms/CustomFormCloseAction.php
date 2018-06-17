@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Forms;
+namespace Jhelom\Core\Forms;
 
 
 use pocketmine\Player;
 
 /**
  * Class CustomFormCloseAction
- * @package Jhelom\WorldBackup\Forms
+ * @package Jhelom\Core\Forms
  */
 abstract class CustomFormCloseAction
 {

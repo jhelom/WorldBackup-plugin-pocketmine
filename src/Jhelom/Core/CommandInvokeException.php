@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup;
+namespace Jhelom\Core;
 
 
 use Exception;
 
 /**
  * Class CommandInvokeException
- * @package Jhelom\WorldBackup
+ * @package Jhelom\Core
  */
 class CommandInvokeException extends Exception
 {

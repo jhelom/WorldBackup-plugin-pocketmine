@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup\Commands;
 
+use Jhelom\Core\CommandArguments;
+use Jhelom\Core\CommandInvokeException;
+use Jhelom\Core\CommandInvoker;
+use Jhelom\Core\ServiceException;
 use Jhelom\WorldBackup\BackupForms\TopForm;
-use Jhelom\WorldBackup\CommandArguments;
-use Jhelom\WorldBackup\CommandInvokeException;
-use Jhelom\WorldBackup\CommandInvoker;
 use Jhelom\WorldBackup\Messages;
-use Jhelom\WorldBackup\ServiceException;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -147,7 +147,7 @@ class WorldBackupCommand extends CommandInvoker
             $sender->sendMessage($s);
         }
 
-        $sender->sendMessage('+------+-----------------+');
+        $sender->sendMessage('+-----+------------------+');
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Forms;
+namespace Jhelom\Core\Forms;
 
 
-use Jhelom\WorldBackup\Utils\Log;
+use Jhelom\Core\Logging;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
 use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
@@ -12,7 +12,7 @@ use pocketmine\Player;
 
 /**
  * Class Form
- * @package Jhelom\WorldBackup\Forms
+ * @package Jhelom\Core\Forms
  */
 abstract class Form
 {
@@ -53,7 +53,7 @@ abstract class Form
             unset(self::$forms[$playerName][$formId]);
 
             if (!is_null($form)) {
-                Log::debug('form #' . $formId . ' close');
+                Logging::debug('form #' . $formId . ' close');
                 $result = json_decode($pk->formData, true);
                 $form->onProcess($player, $result);
             }
@@ -102,7 +102,7 @@ abstract class Form
         }
 
         $this->id = mt_rand(0, 30000);
-        Log::debug('form #' . $this->id . ' send');
+        Logging::debug('form #' . $this->id . ' send');
         self::$forms[$playerName][$this->getId()] = $this;
 
         $pk = new ModalFormRequestPacket();

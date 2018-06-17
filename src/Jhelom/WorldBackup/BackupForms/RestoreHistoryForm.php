@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\BackupForms;
 
 
-use Jhelom\WorldBackup\Forms\ButtonClickAction;
-use Jhelom\WorldBackup\Forms\ButtonElement;
-use Jhelom\WorldBackup\Forms\SimpleForm;
-use Jhelom\WorldBackup\Forms\SimpleFormCloseAction;
+use Jhelom\Core\Forms\ButtonClickAction;
+use Jhelom\Core\Forms\ButtonElement;
+use Jhelom\Core\Forms\SimpleForm;
+use Jhelom\Core\Forms\SimpleFormCloseAction;
 use Jhelom\WorldBackup\Messages;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\Player;
@@ -21,7 +21,7 @@ class RestoreHistoryForm extends SimpleForm
     /**
      * RestoreHistoryForm constructor.
      * @param string $world
-     * @throws \Jhelom\WorldBackup\ServiceException
+     * @throws \Jhelom\Core\ServiceException
      */
     public function __construct(string $world)
     {

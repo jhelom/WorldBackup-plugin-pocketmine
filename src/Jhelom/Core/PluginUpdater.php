@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Utils;
+namespace Jhelom\Core;
 
 use Exception;
 use pocketmine\plugin\PluginBase;
@@ -9,7 +9,7 @@ use pocketmine\utils\TextFormat;
 
 /**
  * Class PluginUpdater
- * @package Jhelom\WorldBackup
+ * @package Jhelom\Core
  */
 class PluginUpdater
 {
@@ -93,6 +93,7 @@ class PluginUpdater
             $result = $this->parseHtml($html);
 
             if (is_null($result)) {
+                $this->info($this->getMessage('latest', $currentVersion));
                 return;
             }
 
@@ -100,6 +101,7 @@ class PluginUpdater
             $downloadVersion = $this->parseFilename($downloadUrl);
 
             if (is_null($downloadVersion)) {
+                $this->info($this->getMessage('latest', $currentVersion));
                 return;
             }
 

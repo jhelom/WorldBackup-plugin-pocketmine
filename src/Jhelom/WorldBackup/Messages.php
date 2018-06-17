@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 
-use Jhelom\WorldBackup\Utils\StringFormat;
+use Jhelom\Core\StringFormat;
 use pocketmine\utils\Config;
 
 /**

@@ -1,18 +1,29 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Utils;
+namespace Jhelom\Core;
 
 use Exception;
-use Jhelom\WorldBackup\Main;
+use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginLogger;
 
 /**
- * Class Log
- * @package Jhelom\WorldBackup\Utils
+ * Class Logging
+ * @package Jhelom\Core
  */
-class Log
+class Logging
 {
+    /** @var Plugin */
+    static private $plugin;
+
+    /**
+     * @param Plugin $plugin
+     */
+    static public function init(Plugin $plugin): void
+    {
+        self::$plugin = $plugin;
+    }
+
     /**
      * @param string $message
      * @param mixed ...$args
@@ -27,7 +38,7 @@ class Log
      */
     static public function getLogger(): PluginLogger
     {
-        return Main::getInstance()->getLogger();
+        return self::$plugin->getLogger();
     }
 
     /**

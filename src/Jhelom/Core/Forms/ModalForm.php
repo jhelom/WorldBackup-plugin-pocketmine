@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Forms;
+namespace Jhelom\Core\Forms;
 
 use pocketmine\Player;
 
 /**
  * Class ModalForm
- * @package Jhelom\WorldBackup\Forms
+ * @package Jhelom\Core\Forms
  */
 class ModalForm extends Form
 {

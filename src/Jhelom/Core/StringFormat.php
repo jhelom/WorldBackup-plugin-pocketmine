@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Utils;
+namespace Jhelom\Core;
 
 /**
  * Class StringFormat
- * @package Jhelom\WorldBackup\utils
+ * @package Jhelom\Core
  */
 class StringFormat
 {

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup;
+namespace Jhelom\Core;
 
 
 /**
  * Class CommandArguments
- * @package Jhelom\WorldBackup
+ * @package Jhelom\Core
  */
 class CommandArguments
 {

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup\BackupForms;
 
-use Jhelom\WorldBackup\Forms\CustomForm;
-use Jhelom\WorldBackup\Forms\CustomFormCloseAction;
-use Jhelom\WorldBackup\Forms\CustomFormSubmitAction;
-use Jhelom\WorldBackup\Forms\CustomFormValues;
+use Jhelom\Core\Forms\CustomForm;
+use Jhelom\Core\Forms\CustomFormCloseAction;
+use Jhelom\Core\Forms\CustomFormSubmitAction;
+use Jhelom\Core\Forms\CustomFormValues;
 use Jhelom\WorldBackup\Messages;
 use pocketmine\Player;
 

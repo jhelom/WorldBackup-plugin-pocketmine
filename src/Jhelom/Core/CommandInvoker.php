@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup;
+namespace Jhelom\Core;
+
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -11,7 +12,7 @@ use pocketmine\plugin\Plugin;
 
 /**
  * Class CommandInvoker
- * @package Jhelom\WorldBackup
+ * @package Jhelom\Core
  */
 abstract class CommandInvoker implements CommandExecutor
 {
@@ -80,4 +81,5 @@ abstract class CommandInvoker implements CommandExecutor
      * @return bool
      */
     abstract protected function onInvoke(CommandSender $sender, CommandArguments $args): bool;
+
 }

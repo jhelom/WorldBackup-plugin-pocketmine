@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\WorldBackup\Forms;
+namespace Jhelom\Core\Forms;
 
 
 /**
  * Class CustomFormValues
- * @package Jhelom\WorldBackup\Forms
+ * @package Jhelom\Core\Forms
  */
 class CustomFormValues
 {

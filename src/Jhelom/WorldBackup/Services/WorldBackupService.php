@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\Services;
 
 
+use Jhelom\Core\JsonFile;
+use Jhelom\Core\Logging;
+use Jhelom\Core\ServiceException;
 use Jhelom\WorldBackup\Main;
 use Jhelom\WorldBackup\Messages;
-use Jhelom\WorldBackup\ServiceException;
-use Jhelom\WorldBackup\Utils\JsonFile;
-use Jhelom\WorldBackup\Utils\Log;
 use pocketmine\Server;
 
 /**
@@ -78,13 +78,13 @@ class WorldBackupService
             return false;
         }
 
-        Log::info(Messages::autoBackupStart());
+        Logging::info(Messages::autoBackupStart());
 
         $this->backupAll(true);
         $this->settings[self::LAST_AUTO_BACKUP] = $today;
         $this->saveSettings();
 
-        Log::info(Messages::autoBackupEnd());
+        Logging::info(Messages::autoBackupEnd());
         return true;
     }
 
@@ -240,7 +240,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
-                Log::debug('copy: ' . $name);
+                Logging::debug('copy: ' . $name);
                 copy($srcFile, $dstFile);
             }
         }
