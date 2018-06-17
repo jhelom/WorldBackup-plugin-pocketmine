@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 use Jhelom\Core\Forms\Form;
+use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use pocketmine\event\level\LevelLoadEvent;
+use pocketmine\event\level\LevelSaveEvent;
 use pocketmine\event\level\LevelUnloadEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -111,7 +113,7 @@ class Main extends PluginBaseEx implements Listener
      */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        $this->getLogger()->info('§aLevelLoadEvent:' . $event->getLevel()->getName());
+        Logging::info('§aLevelLoadEvent:' . $event->getLevel()->getName());
     }
 
     /**
@@ -119,7 +121,15 @@ class Main extends PluginBaseEx implements Listener
      */
     public function onLevelUnload(LevelUnloadEvent $event)
     {
-        $this->getLogger()->info('§aLevelUnloadEvent:' . $event->getLevel()->getName());
+        Logging::info('§aLevelUnloadEvent:' . $event->getLevel()->getName());
+    }
+
+    /**
+     * @param LevelSaveEvent $event
+     */
+    public function onLevelSave(LevelSaveEvent $event)
+    {
+        Logging::info('§aLevelUnloadEvent:' . $event->getLevel()->getName());
     }
 
     /**

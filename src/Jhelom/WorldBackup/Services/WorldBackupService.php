@@ -379,8 +379,6 @@ class WorldBackupService
             throw new ServiceException(Messages::historyNotFound($world, $historyNumber));
         }
 
-        $sourceDir = $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
-
         if ($server->isLevelLoaded($world)) {
             $level = $server->getLevelByName($world);
             $spawnLocation = $level->getSpawnLocation();
@@ -398,12 +396,12 @@ class WorldBackupService
                         $player->kick(Messages::restoreLogout($world), false);
                     }
 
-                    $server->unloadLevel($level, true);
+                    $server->unloadLevel($level);
                     $this->deleteDirectories($sourceDir);
                     $this->copyDirectories($backupDir, $sourceDir);
                 } finally {
                     $server->loadLevel($world);
-                    $level = Server::getInstance()->getLevelByName($world);
+                    $level = $server->getLevelByName($world);
                     $server->setDefaultLevel($level);
                 }
 
