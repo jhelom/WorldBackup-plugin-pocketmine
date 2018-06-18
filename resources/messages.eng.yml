@@ -1,6 +1,5 @@
-command-prohibited: '§eThis command is prohibited.'
-command-invoke-on-console: '§cthis command on Console.'
-command-invoke-on-player: '§cthis command in Game.'
+command-execute-on-console: '§cthis command execute on Console.'
+command-execute-on-player: '§cthis command execute on Game.'
 
 description: 'ワールドのバックアップと復元'
 
@@ -33,26 +32,4 @@ restore-completed: '§aワールド "{0}" を履歴 "{1}" から復元しまし�
 
 auto-backup-start: '§a全ワールドの自動バックアップを開始しました。'
 auto-backup-end: '§a全ワールドの自動バックアップが完了しました。'
-
-form-backup-confirm-title: 'バックアップの確認'
-form-backup-confirm-content: 'ワールド "{0}" をバックアップしますか？'
-
-form-backup-title: 'ワールドのバックアップ'
-form-backup-content: 'バックアップしたいワールドを選択してください。'
-
-form-restore-cofirm-title: '復元の確認'
-form-restore-confirm-content: 'ワールド "{0}" をバックアップ履歴 {1} ({2}) から復元しますか？'
-
-form-restore-title: 'ワールドの復元'
-form-restore-content: 'バックアップから復元したいワールドを選択してください。'
-
-form-restore-history-title: '復元する履歴の選択'
-form-restore-history-content: '復元するワールド "{0}" の履歴を選択してください。'
-
-form-settings-title: 'バックアップ設定'
-
-form-top-title: 'ワールドのバックアップと復元'
-form-top-backup-button: 'バックアップする'
-form-top-restore-button: '復元する'
-form-top-settings-button: '設定'
-form-top-quit-button: '終了'
+it-button: '終了'

@@ -24,14 +24,6 @@ class Messages
     }
 
     /**
-     * @return string
-     */
-    static public function commandProhibited(): string
-    {
-        return self::_getMessage('command-prohibited');
-    }
-
-    /**
      * @param string $key
      * @param mixed|null ...$args
      * @return string
@@ -45,32 +37,6 @@ class Messages
         $message = self::$messages[$key];
 
         return StringFormat::formatEx($message, $args);
-    }
-
-    /**
-     * @return string
-     */
-    static public function commandInvokeOnPlayer(): string
-    {
-        return self::_getMessage('command-invoke-on-player');
-    }
-
-    /**
-     * @return string
-     */
-    static public function commandInvokeOnConsole(): string
-    {
-        return self::_getMessage('command-invoke-on-console');
-    }
-
-    /**
-     * @param string $playerName
-     * @param string $serverName
-     * @return string
-     */
-    static public function transfer(string $playerName, string $serverName): string
-    {
-        return self::_getMessage('command-invoke-on-console', $playerName, $serverName);
     }
 
     /**
@@ -116,12 +82,22 @@ class Messages
 
     /**
      * @param string $world
-     * @param int $historyNumber
+     * @param string $history
      * @return string
      */
-    static public function restoreCompleted(string $world, int $historyNumber): string
+    static public function restorePlan(string $world, string $history): string
     {
-        return self::_getMessage('restore-completed', $world, $historyNumber);
+        return self::_getMessage('restore-plan', $world, $history);
+    }
+
+    static public function restoreStart(string $world, string $history): string
+    {
+        return self::_getMessage('restore-start', $world, $history);
+    }
+
+    static public function restoreCompleted(string $world, string $history): string
+    {
+        return self::_getMessage('restore-completed', $world, $history);
     }
 
     /**
@@ -242,30 +218,12 @@ class Messages
 
     /**
      * @param string $world
-     * @param int $historyNumber
+     * @param string $history
      * @return string
      */
-    static public function historyNotFound(string $world, int $historyNumber): string
+    static public function historyNotFound(string $world, string $history): string
     {
-        return self::_getMessage('history-not-found', $world, $historyNumber);
-    }
-
-    /**
-     * @param string $world
-     * @return string
-     */
-    static public function restoreLogout(string $world): string
-    {
-        return self::_getMessage('restore-logout', $world);
-    }
-
-    /**
-     * @param string $world
-     * @return string
-     */
-    static public function restoreTeleport(string $world): string
-    {
-        return self::_getMessage('restore-teleport', $world);
+        return self::_getMessage('history-not-found', $world, $history);
     }
 
     /**
@@ -276,136 +234,8 @@ class Messages
         return self::_getMessage('history-invalid');
     }
 
-    /**
-     * @return string
-     */
-    static public function backupConfirmFormTitle(): string
+    static public function executeOnConsole(): string
     {
-        return self::_getMessage('form-backup-confirm-title');
-    }
-
-    /**
-     * @param string $world
-     * @return string
-     */
-    static public function backupConfirmFormContent(string $world): string
-    {
-        return self::_getMessage('form-backup-confirm-content', $world);
-    }
-
-    /**
-     * @return string
-     */
-    static public function backupFormTitle(): string
-    {
-        return self::_getMessage('form-backup-title');
-    }
-
-    /**
-     * @return string
-     */
-    static public function backupFormContent(): string
-    {
-        return self::_getMessage('form-backup-content');
-    }
-
-    /**
-     * @return string
-     */
-    static public function restoreConfirmFormTitle(): string
-    {
-        return self::_getMessage('form-restore-confirm-title');
-    }
-
-    /**
-     * @param string $world
-     * @param int $historyNumber
-     * @param string $historyDate
-     * @return string
-     */
-    static public function restoreConfirmFormContent(string $world, int $historyNumber, string $historyDate): string
-    {
-        return self::_getMessage('form-restore-confirm-content', $world, $historyNumber, $historyDate);
-    }
-
-    /**
-     * @return string
-     */
-    static public function restoreFormTitle(): string
-    {
-        return self::_getMessage('form-restore-title');
-    }
-
-    /**
-     * @return string
-     */
-    static public function restoreFormContent(): string
-    {
-        return self::_getMessage('form-restore-content');
-    }
-
-    /**
-     * @return string
-     */
-    static public function restoreHistoryFormTitle(): string
-    {
-        return self::_getMessage('form-restore-history-title');
-    }
-
-    /**
-     * @param string $world
-     * @return string
-     */
-    static public function restoreHistoryFormContent(string $world): string
-    {
-        return self::_getMessage('form-restore-history-content', $world);
-    }
-
-    /**
-     * @return string
-     */
-    static public function settingsFormTitle(): string
-    {
-        return self::_getMessage('form-settings-title');
-    }
-
-    /**
-     * @return string
-     */
-    static public function topFormTitle(): string
-    {
-        return self::_getMessage('form-top-title');
-    }
-
-    /**
-     * @return string
-     */
-    static public function topFormBackupButton(): string
-    {
-        return self::_getMessage('form-top-backup-button');
-    }
-
-    /**
-     * @return string
-     */
-    static public function topFormRestoreButton(): string
-    {
-        return self::_getMessage('form-top-restore-button');
-    }
-
-    /**
-     * @return string
-     */
-    static public function topFormSettingsButton(): string
-    {
-        return self::_getMessage('form-top-settings-button');
-    }
-
-    /**
-     * @return string
-     */
-    static public function topFormQuitButton(): string
-    {
-        return self::_getMessage('form-top-quit-button');
+        return self::_getMessage('command-execute-on-console');
     }
 }
