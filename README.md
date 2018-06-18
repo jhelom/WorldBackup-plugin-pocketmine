@@ -8,23 +8,23 @@ Back up all the world automatically every day.
 
 The history of the backup is recorded.
 
-### Commands
+## Commands
 
 Commands can only be run from the server console.
 
-### Show List of Backups.
+## Show List of Backups.
 
 ```
 /wbackup list
 ```
 
-### Backup
+## Backup
 
 ```
 /wbackup backup [world]
 ```
 
-### Restore
+## Restore
 
 ```
 /wbackup restore [world] [yyyy-mm-dd]
@@ -38,13 +38,13 @@ The restoration process of the world will be executed the next time the server s
 
 This is because restoring will be incomplete if you change the world's file while the server is running.
 
-### Show Settings
+## Show Settings
 
 ```
 /wbackup set
 ```
 
-### Set History Limit
+## Set History Limit
 
 ```
 /wbackup set max [int]
@@ -57,6 +57,9 @@ The history limit can be set in a range from at least 3 to a maximum of 30.
 If the number of histories backed up exceeds the upper limit, it will be deleted from the oldest history.
 
 
+---
+
+
 # 日本語
 
 ワールドのバックアップと復元ができる PocketMine-MP のプラグインです。
@@ -66,23 +69,23 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 バックアップは世代管理できます。
 
 
-### コマンド
+## コマンド
 
 コマンドはサーバーコンソールからのみ実行できます。
 
-### バックアップの一覧を見る
+## バックアップの一覧を見る
 
 ```
 /wbackup list
 ```
 
-### バックアップする
+## バックアップする
 
 ```
 /wbackup backup [world]
 ```
 
-### 復元する
+## 復元する
 
 ```
 /wbackup restore [world] [yyyy-mm-dd]
@@ -97,13 +100,13 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 これは、サーバーが動作中時にワールドのファイルを書き換えると復元が不完全になるためです。
 
 
-### バックアップ設定を見る
+## バックアップ設定を見る
 
 ```
 /wbackup set
 ```
 
-### バックアップ履歴の上限数を設定する
+## バックアップ履歴の上限数を設定する
 
 ```
 /wbackup set max [int]
