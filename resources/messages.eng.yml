@@ -1,6 +1,6 @@
-command-execute-on-console: '§cPlease execute this command from the server console.'
+command-execute-on-console: '§cthis command execute on server console.'
 
-description: 'World Backup & Restore'
+description: 'World Backup and Restore'
 
 help1: '=== World Backup Command Help ==='
 help2: '§a/wbackup list §f: List of Worlds.'
