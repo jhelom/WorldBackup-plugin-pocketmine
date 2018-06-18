@@ -1,0 +1,9 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine
+branches:
+- master
+projects: [
+  WorldBackup:
+    path: "WorldBackup-plugin-pocketmine"
+    icon: "assets/icon.png"
+  ]
+...
