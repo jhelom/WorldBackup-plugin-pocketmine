@@ -8,6 +8,7 @@ use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
+use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\level\LevelSaveEvent;
 use pocketmine\event\level\LevelUnloadEvent;
@@ -41,15 +42,10 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
+        $this->getLogger()->info('§aonLoad');
+        parent::onLoad();
+
         Main::$instance = $this;
-    }
-
-    public function onEnable()
-    {
-        parent::onEnable();
-
-        $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
-        $updater->update();
 
         // config
 
@@ -68,6 +64,19 @@ class Main extends PluginBaseEx implements Listener
         }
 
         Messages::load($message_file);
+
+        // restore
+
+        WorldBackupService::getInstance()->executeRestorePlan();
+    }
+
+    public function onEnable()
+    {
+        $this->getLogger()->info('§aonEnable');
+        parent::onEnable();
+
+        $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
+        $updater->update();
 
         // task
 

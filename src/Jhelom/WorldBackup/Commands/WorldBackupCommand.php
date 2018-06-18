@@ -8,7 +8,6 @@ use Jhelom\Core\CommandArguments;
 use Jhelom\Core\CommandInvokeException;
 use Jhelom\Core\CommandInvoker;
 use Jhelom\Core\ServiceException;
-use Jhelom\WorldBackup\BackupForms\TopForm;
 use Jhelom\WorldBackup\Messages;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\command\CommandSender;
@@ -26,14 +25,14 @@ class WorldBackupCommand extends CommandInvoker
 
     /**
      * WorldBackupCommand constructor.
-     * @param Plugin $owner
+     * @param Plugin $plugin
      */
-    public function __construct(Plugin $owner)
+    public function __construct(Plugin $plugin)
     {
-        parent::__construct(self::COMMAND_NAME, $owner);
-        $this->getCommand()->setUsage('/wbackup [list|backup|restore|history|set]');
-        $this->getCommand()->setDescription(Messages::commandDescription());
-        $this->getCommand()->setPermission('Jhelom.command.wbackup');
+        parent::__construct(self::COMMAND_NAME, $plugin);
+        $this->setUsage('/wbackup [list|backup|restore|history|set]');
+        $this->setDescription(Messages::commandDescription());
+        $this->setPermission('Jhelom.command.wbackup');
     }
 
     /**
@@ -46,7 +45,7 @@ class WorldBackupCommand extends CommandInvoker
     protected function onInvoke(CommandSender $sender, CommandArguments $args): bool
     {
         if ($sender instanceof Player) {
-            TopForm::send($sender);
+            $sender->sendMessage(Messages::executeOnConsole());
             return true;
         } else {
             $operation = strtolower($args->getString(''));
@@ -101,26 +100,34 @@ class WorldBackupCommand extends CommandInvoker
     /**
      * @param CommandSender $sender
      * @param CommandArguments $args
-     * @throws CommandInvokeException
      * @throws ServiceException
      */
     private function restoreOperation(CommandSender $sender, CommandArguments $args): void
     {
-        $service = WorldBackupService::getInstance();
         $world = $args->getString();
-        $service->notExistsWorldBackupIfThrow($world);
-        $historyNumber = $args->getInt();
+        $history = $args->getString();
 
-        if (is_null($historyNumber)) {
-            throw new CommandInvokeException(Messages::historyRequired());
+        $service = WorldBackupService::getInstance();
+
+        try {
+            $service->notExistsWorldBackupIfThrow($world);
+        } catch (ServiceException $e) {
+            $sender->sendMessage($e->getMessage());
+            $this->listOperation($sender);
+            return;
         }
 
-        if ($service->existsWorldSource($world)) {
-            $service->backup($world, true);
+        try {
+            $service->notExistsHistoryIfThrow($world, $history);
+        } catch (ServiceException $e) {
+            $sender->sendMessage($e->getMessage());
+            $this->historyOperation($sender, new CommandArguments([$world]));
+            return;
         }
 
-        $service->restore($world, $historyNumber);
-        $sender->sendMessage(Messages::restoreCompleted($world, $historyNumber));
+        $service->restorePlan($world, $history);
+        $sender->sendMessage(Messages::restorePlan($world, $history));
+
     }
 
     /**
@@ -161,21 +168,21 @@ class WorldBackupCommand extends CommandInvoker
         $service = WorldBackupService::getInstance();
 
         switch ($action) {
-            case 'max':
+            case 'limit':
                 $value = $args->getInt();
 
                 if (!is_numeric($value)) {
                     throw new CommandInvokeException(Messages::setMaxInvalid());
                 }
 
-                $service->setHistoryMax($value);
+                $service->setHistoryLimit($value);
                 $service->saveSettings();
-                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryMax()));
+                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryLimit()));
                 break;
 
             default:
-                $sender->sendMessage('=== 現在の設定 === ');
-                $sender->sendMessage(Messages::setMax($service->getHistoryMax()));
+                $sender->sendMessage(Messages::showSettings());
+                $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
                 break;
         }
     }
@@ -194,9 +201,9 @@ class WorldBackupCommand extends CommandInvoker
         $sender->sendMessage('+-----------------+------------------+---------+');
 
         foreach ($worlds as $world) {
-            $revisions = $service->getHistories($world);
-            $count = count($revisions);
-            $lastBackup = $count === 0 ? '' : $revisions[0];
+            $histories = $service->getHistories($world);
+            $count = count($histories);
+            $lastBackup = $count === 0 ? '' : $histories[0];
             $sender->sendMessage(sprintf("| %-15s | %-16s | %7d |", $world, $lastBackup, $count));
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Jhelom\Core;
 
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\TextFormat;
 
 /**
  * Class PluginBaseEx
@@ -12,11 +11,9 @@ use pocketmine\utils\TextFormat;
  */
 abstract class PluginBaseEx extends PluginBase
 {
-    public function onEnable()
+    public function onLoad()
     {
-        $this->getLogger()->debug(TextFormat::GREEN . 'onEnable');
-
-        parent::onEnable();
+        parent::onLoad();
 
         Logging::setLogger($this->getLogger());
 
@@ -30,17 +27,16 @@ abstract class PluginBaseEx extends PluginBase
     public function onDisable()
     {
         parent::onDisable();
-        $this->getLogger()->debug(TextFormat::GREEN . 'onDisable');
     }
 
     /**
-     * @param CommandInvoker[] $invokers
+     * @param array $commands
      */
-    protected function setupCommands(array $invokers): void
+    protected function setupCommands(array $commands): void
     {
-        foreach ($invokers as $invoker) {
-            if ($invoker instanceof CommandInvoker) {
-                $this->getServer()->getCommandMap()->register($invoker->getName(), $invoker->getCommand());
+        foreach ($commands as $command) {
+            if ($command instanceof CommandInvoker) {
+                $this->getServer()->getCommandMap()->register($command->getName(), $command);
             }
         }
     }

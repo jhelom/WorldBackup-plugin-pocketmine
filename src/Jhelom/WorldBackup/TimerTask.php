@@ -23,6 +23,6 @@ class TimerTask extends Task
      */
     public function onRun(int $currentTick)
     {
-        WorldBackupService::getInstance()->executeAutoBackup();
+        WorldBackupService::getInstance()->autoBackup();
     }
 }
