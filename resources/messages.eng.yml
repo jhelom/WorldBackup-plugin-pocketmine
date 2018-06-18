@@ -1,0 +1,35 @@
+command-execute-on-console: '§cPlease execute this command from the server console.'
+
+description: 'World Backup & Restore'
+
+help1: '=== World Backup Command Help ==='
+help2: '§a/wbackup list §f: List of Worlds.'
+help3: '§a/wbackup backup [world] §f: Backup.'
+help4: '§a/wbackup restore [world] [yyyy-mm-dd] §f: Restore'
+help5: '§a/wbackup history [world] §f: Show Backup Histories'
+help6: '§a/wbackup set §f: Show settings.'
+help7: '§a/wbackup set max [int] §f: Set history limit.'
+
+world-required: '§cWorld required.'
+world-not-found: '§cWorld not found. "{0}"'
+world-invalid: '§cInvalid world.'
+
+history-invalid: '§cInvalid history.'
+history-required: '§cHistory required.'
+history-not-found: '§cHistory not found. World="{0}", History="{1}".'
+history-list: 'Backup Histories of "{0}"'
+
+backup-completed: '§aWorld "{0}" backup has been completed.'
+
+set-max: 'History Limit = {0}'
+set-max-invalid: '§cHistory limit required.'
+set-max-completed: '§aBackup history limit has been set to {0}.'
+
+restore-plan: '§aRestart the server to restore the world "{0}" from history "{1}". §6 (Please use the STOP command)'
+restore-start: '§aStart restoring the world "{0}" from history "{1}".'
+restore-completed: '§aRestored world "{0}" from history "{1}".'
+
+auto-backup-start: '§aAutomatic backup of all the world started.'
+auto-backup-end: '§aAutomatic backup of all the world has been completed.'
+
+show-settings: '=== Backup Settings ==='

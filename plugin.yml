@@ -1,0 +1,12 @@
+name: WorldBackup
+main: Jhelom\WorldBackup\Main
+version: "1.0"
+api: ["3.0.0", "3.0.0-ALPHA12"]
+load: STARTUP
+author: Jhelom
+description: World Backup and Restore.
+website: https://github.com/jhelom/WorldBackup-plugin-pocketmine
+
+permissions:
+  jhelom.command.wbackup:
+    default: op

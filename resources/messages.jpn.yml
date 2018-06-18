@@ -1,0 +1,35 @@
+command-execute-on-console: '§cこのコマンドはサーバーコンソールから実行してください'
+
+description: 'ワールドのバックアップと復元'
+
+help1: '=== World Backup コマンドヘルプ ==='
+help2: '§a/wbackup list §f: 一覧を見る'
+help3: '§a/wbackup backup [world] §f: バックアップする'
+help4: '§a/wbackup restore [world] [yyyy-mm-dd] §f: 復元する'
+help5: '§a/wbackup history [world] §f: 履歴一覧を見る'
+help6: '§a/wbackup set §f: 設定を見る'
+help7: '§a/wbackup set max [int] §f: 履歴数上限を設定する'
+
+world-required: '§cワールドを指定してください。'
+world-not-found: '§cワールド "{0}" は存在しません。'
+world-invalid: '§cワールド名が認識できません。'
+
+history-invalid: '§cバックアック履歴が認識できません。'
+history-required: '§c履歴を指定してください。'
+history-not-found: '§cワールド "{0}" のバックアック履歴 "{1}" が存在しません。'
+history-list: 'ワールド "{0}" のバックアップ履歴一覧'
+
+backup-completed: '§aワールド "{0}" をバックアップしました。'
+
+set-max: 'バックアップ履歴数上限 = {0}'
+set-max-invalid: '§cバックアップ履歴数上限を指定してください。'
+set-max-completed: '§aバックアップ履歴数上限を {0} に設定しました。'
+
+restore-plan: '§aワールド "{0}" を履歴 "{1}" から復元するためにサーバーを再起動してください。§6（STOPコマンドを使用してください）'
+restore-start: '§aワールド "{0}" の履歴 "{1}" からの復元を開始しました。'
+restore-completed: '§aワールド "{0}" の履歴 "{1}" からの復元が完了しました。'
+
+auto-backup-start: '§a全ワールドの自動バックアップを開始しました。'
+auto-backup-end: '§a全ワールドの自動バックアップが完了しました。'
+
+show-settings: '=== バックアップ設定 ==='
