@@ -25,14 +25,14 @@ class WorldBackupCommand extends CommandInvoker
 
     /**
      * WorldBackupCommand constructor.
-     * @param Plugin $owner
+     * @param Plugin $plugin
      */
-    public function __construct(Plugin $owner)
+    public function __construct(Plugin $plugin)
     {
-        parent::__construct(self::COMMAND_NAME, $owner);
-        $this->getCommand()->setUsage('/wbackup [list|backup|restore|history|set]');
-        $this->getCommand()->setDescription(Messages::commandDescription());
-        $this->getCommand()->setPermission('Jhelom.command.wbackup');
+        parent::__construct(self::COMMAND_NAME, $plugin);
+        $this->setUsage('/wbackup [list|backup|restore|history|set]');
+        $this->setDescription(Messages::commandDescription());
+        $this->setPermission('Jhelom.command.wbackup');
     }
 
     /**

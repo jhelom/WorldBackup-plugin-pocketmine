@@ -30,13 +30,13 @@ abstract class PluginBaseEx extends PluginBase
     }
 
     /**
-     * @param CommandInvoker[] $invokers
+     * @param array $commands
      */
-    protected function setupCommands(array $invokers): void
+    protected function setupCommands(array $commands): void
     {
-        foreach ($invokers as $invoker) {
-            if ($invoker instanceof CommandInvoker) {
-                $this->getServer()->getCommandMap()->register($invoker->getName(), $invoker->getCommand());
+        foreach ($commands as $command) {
+            if ($command instanceof CommandInvoker) {
+                $this->getServer()->getCommandMap()->register($command->getName(), $command);
             }
         }
     }
