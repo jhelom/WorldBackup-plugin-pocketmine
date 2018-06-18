@@ -14,16 +14,10 @@ use pocketmine\plugin\Plugin;
  * Class CommandInvoker
  * @package Jhelom\Core
  */
-abstract class CommandInvoker implements CommandExecutor
+abstract class CommandInvoker extends PluginCommand implements CommandExecutor
 {
     /** @var Plugin */
     private $plugin;
-
-    /** @var PluginCommand */
-    private $command;
-
-    /** @var string */
-    private $name;
 
     /**
      * CommandInvoker constructor.
@@ -32,28 +26,9 @@ abstract class CommandInvoker implements CommandExecutor
      */
     public function __construct(string $name, Plugin $plugin)
     {
+        parent::__construct($name, $plugin);
         $this->plugin = $plugin;
-        $this->name = $name;
-        $this->command = new class($name, $plugin) extends PluginCommand
-        {
-        };
-        $this->command->setExecutor($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return PluginCommand
-     */
-    public function getCommand(): PluginCommand
-    {
-        return $this->command;
+        $this->setExecutor($this);
     }
 
     /**
