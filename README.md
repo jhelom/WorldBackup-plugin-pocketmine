@@ -1,12 +1,11 @@
 # World Backup
 
-https://raw.github.com/wiki
 
-![alt text](http://url/to/img.png)
+![console](https://github.com/jhelom/WorldBackup-plugin-pocketmine/blob/develop/assets/console.png)
 
 # English
 
-This Plug-in supports Backup and Restoration of World data.
+This PocketMine-MP Plugin supports Backup and Restore World data.
 
 Back up all the world automatically every day.
 
@@ -19,39 +18,36 @@ Commands can only be run from the server console.
 ## Show List of Backups.
 
 ```
-/wbackup list
+wbackup list
 ```
 
 ## Backup
 
 ```
-/wbackup backup [world]
+wbackup backup [world]
 ```
 
 ## Restore
 
 ```
-/wbackup restore [world] [yyyy-mm-dd]
+wbackup restore [world] [yyyy-mm-dd]
 ```
 
-**Restart the server after executing the restore command.**
-
-*Use the stop command*
-
-The restoration process of the world will be executed the next time the server starts up.
+Restart the server using the STOP command to perform the restore.
 
 This is because restoring will be incomplete if you change the world's file while the server is running.
 
+If you want to cancel the restore, please use the "**wbackup clear**" command before restarting the server.
 ## Show Settings
 
 ```
-/wbackup set
+wbackup set
 ```
 
 ## Set History Limit
 
 ```
-/wbackup set limit [int]
+wbackup set limit [int]
 ```
 
 The default value is 10.
@@ -80,19 +76,19 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 ## バックアップの一覧を見る
 
 ```
-/wbackup list
+wbackup list
 ```
 
 ## バックアップする
 
 ```
-/wbackup backup [world]
+wbackup backup [world]
 ```
 
 ## 復元する
 
 ```
-/wbackup restore [world] [yyyy-mm-dd]
+wbackup restore [world] [yyyy-mm-dd]
 ```
 
 **復元コマンド実行後にサーバーを再起動してください。**
@@ -103,17 +99,22 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 
 これは、サーバーが動作中時にワールドのファイルを書き換えると復元が不完全になるためです。
 
+復元をキャンセルするには、サーバーを再起動する前に、次のコマンドを使います。
+
+```
+wbackup clear
+```
 
 ## バックアップ設定を見る
 
 ```
-/wbackup set
+wbackup set
 ```
 
 ## バックアップ履歴の上限数を設定する
 
 ```
-/wbackup set limit [int]
+wbackup set limit [int]
 ```
 
 規定値は 10 です。

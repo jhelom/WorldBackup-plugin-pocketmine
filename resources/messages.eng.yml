@@ -26,7 +26,7 @@ set-max: 'History Limit = {0}'
 set-max-invalid: '§cHistory limit required.'
 set-max-completed: '§aBackup history limit has been set to {0}.'
 
-restore-plan: '§aRestart the server using the STOP command to restore the world "{0}" from history "{1}". §6If you want to cancel restore, use the "wbackup clear" command.'
+restore-plan: '§aRestart the server using the STOP command to perform the restore the world "{0}" from history "{1}". §6If you want to cancel the restore, please use the "wbackup clear" command before restarting the server.'
 restore-start: '§aStart restoring the world "{0}" from history "{1}".'
 restore-completed: '§aRestored world "{0}" from history "{1}".'
 restore-clear: '§aRestore was canceled.'
