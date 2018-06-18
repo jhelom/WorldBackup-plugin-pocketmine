@@ -19,14 +19,6 @@ class Logging
     static private $logger = null;
 
     /**
-     * @param Logger $logger
-     */
-    static public function setLogger(Logger $logger): void
-    {
-        self::$logger = $logger;
-    }
-
-    /**
      * @param string $message
      * @param mixed ...$args
      */
@@ -48,12 +40,47 @@ class Logging
     }
 
     /**
+     * @param Logger $logger
+     */
+    static public function setLogger(Logger $logger): void
+    {
+        self::$logger = $logger;
+    }
+
+    /**
      * @param string $message
      * @param mixed ...$args
      */
     static public function notice(string $message, ... $args): void
     {
         self::getLogger()->notice(StringFormat::formatEx($message, $args));
+    }
+
+    /**
+     * @param string $message
+     * @param mixed ...$args
+     */
+    static public function alert(string $message, ... $args): void
+    {
+        self::getLogger()->alert(StringFormat::formatEx($message, $args));
+    }
+
+    /**
+     * @param string $message
+     * @param mixed ...$args
+     */
+    static public function critical(string $message, ... $args): void
+    {
+        self::getLogger()->critical(StringFormat::formatEx($message, $args));
+    }
+
+    /**
+     * @param string $message
+     * @param mixed ...$args
+     */
+    static public function emergency(string $message, ... $args): void
+    {
+        self::getLogger()->emergency(StringFormat::formatEx($message, $args));
     }
 
     /**

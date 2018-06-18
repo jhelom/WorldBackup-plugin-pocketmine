@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Jhelom\Core;
 
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class PluginMessages
@@ -30,7 +31,7 @@ abstract class PluginMessages
     static protected function _getMessage(string $key, ... $args): string
     {
         if (!array_key_exists($key, self::$messages)) {
-            return '§c' . $key . ': ' . join(', ', $args);
+            return TextFormat::RED . $key . ': ' . join(', ', $args);
         }
 
         $message = self::$messages[$key];
