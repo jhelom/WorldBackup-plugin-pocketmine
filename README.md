@@ -122,7 +122,7 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 # 仕様
 
 
-バックアップされたワールドのファイルはプラグインフォルダの WorldBackup 下の backups に保存されます。
+バックアップされたワールドのファイルはプラグインフォルダの backups 配下に保存されます。
 
 
 ```
