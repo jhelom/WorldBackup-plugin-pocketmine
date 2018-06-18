@@ -108,12 +108,6 @@ class Main extends PluginBaseEx implements Listener
         Form::purge($event->getPlayer()->getLowerCaseName());
     }
 
-    public function onDisable()
-    {
-        parent::onDisable();
-        $this->getLogger()->info('§aonDisable');
-    }
-
     /**
      * @param LevelLoadEvent $event
      */

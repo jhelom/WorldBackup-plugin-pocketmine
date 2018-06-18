@@ -4,47 +4,20 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 
-use Jhelom\Core\StringFormat;
-use pocketmine\utils\Config;
+use Jhelom\Core\PluginMessages;
 
 /**
  * Class Messages
  * @package Jhelom\WorldBackup
  */
-class Messages
+class Messages extends PluginMessages
 {
-    static private $messages = [];
-
-    /**
-     * @param string $path
-     */
-    static public function load(string $path): void
-    {
-        self::$messages = (new Config($path, Config::YAML, []))->getAll();
-    }
-
     /**
      * @return string
      */
     static public function commandDescription(): string
     {
         return self::_getMessage('description');
-    }
-
-    /**
-     * @param string $key
-     * @param mixed|null ...$args
-     * @return string
-     */
-    static private function _getMessage(string $key, ... $args): string
-    {
-        if (!array_key_exists($key, self::$messages)) {
-            return '§c' . $key . ': ' . join(', ', $args);
-        }
-
-        $message = self::$messages[$key];
-
-        return StringFormat::formatEx($message, $args);
     }
 
     /**
