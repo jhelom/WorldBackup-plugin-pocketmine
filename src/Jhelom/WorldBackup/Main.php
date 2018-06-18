@@ -4,15 +4,14 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 use Jhelom\Core\Forms\Form;
+use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
-use pocketmine\event\level\LevelUnloadEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\utils\Config;
 
 /**
@@ -40,8 +39,8 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
-        $this->getLogger()->info('§aonLoad');
         parent::onLoad();
+        $this->getLogger()->debug('§aonLoad');
 
         Main::$instance = $this;
 
@@ -70,9 +69,9 @@ class Main extends PluginBaseEx implements Listener
 
     public function onEnable()
     {
-        $this->getLogger()->info('§aonEnable');
         parent::onEnable();
 
+        Logging::debug('onLoad');
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
         $updater->update();
 
@@ -120,23 +119,7 @@ class Main extends PluginBaseEx implements Listener
      */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        $this->getLogger()->info('§aLevelLoadEvent:' . $event->getLevel()->getName());
-    }
-
-    /**
-     * @param LevelUnloadEvent $event
-     */
-    public function onLevelUnload(LevelUnloadEvent $event)
-    {
-        $this->getLogger()->info('§aLevelUnloadEvent:' . $event->getLevel()->getName());
-    }
-
-    /**
-     * @param DataPacketReceiveEvent $event
-     */
-    public function onPacketReceived(DataPacketReceiveEvent $event): void
-    {
-        Form::process($event);
+        Logging::debug('§aLevelLoadEvent:' . $event->getLevel()->getName());
     }
 }
 

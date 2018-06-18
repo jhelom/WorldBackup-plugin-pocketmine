@@ -51,6 +51,15 @@ class Logging
      * @param string $message
      * @param mixed ...$args
      */
+    static public function notice(string $message, ... $args): void
+    {
+        self::getLogger()->notice(StringFormat::formatEx($message, $args));
+    }
+
+    /**
+     * @param string $message
+     * @param mixed ...$args
+     */
     static public function info(string $message, ... $args): void
     {
         self::getLogger()->info(TextFormat::GREEN . StringFormat::formatEx($message, $args));

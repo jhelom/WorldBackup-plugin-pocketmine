@@ -75,6 +75,14 @@ class Messages
     /**
      * @return string
      */
+    static public function clearRestore(): string
+    {
+        return self::_getMessage('restore-clear');
+    }
+
+    /**
+     * @return string
+     */
     static public function historyRequired(): string
     {
         return self::_getMessage('history-required');
@@ -90,11 +98,21 @@ class Messages
         return self::_getMessage('restore-plan', $world, $history);
     }
 
+    /**
+     * @param string $world
+     * @param string $history
+     * @return string
+     */
     static public function restoreStart(string $world, string $history): string
     {
         return self::_getMessage('restore-start', $world, $history);
     }
 
+    /**
+     * @param string $world
+     * @param string $history
+     * @return string
+     */
     static public function restoreCompleted(string $world, string $history): string
     {
         return self::_getMessage('restore-completed', $world, $history);
@@ -135,6 +153,9 @@ class Messages
         return self::_getMessage('set-max', $max);
     }
 
+    /**
+     * @return string
+     */
     static public function showSettings(): string
     {
         return self::_getMessage('show-settings');
@@ -199,6 +220,14 @@ class Messages
     /**
      * @return string
      */
+    static public function help8(): string
+    {
+        return self::_getMessage('help8');
+    }
+
+    /**
+     * @return string
+     */
     static public function autoBackupStart(): string
     {
         return self::_getMessage('auto-backup-start');
@@ -239,6 +268,9 @@ class Messages
         return self::_getMessage('history-invalid');
     }
 
+    /**
+     * @return string
+     */
     static public function executeOnConsole(): string
     {
         return self::_getMessage('command-execute-on-console');

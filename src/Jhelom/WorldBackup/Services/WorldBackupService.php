@@ -133,6 +133,10 @@ class WorldBackupService
         });
     }
 
+    /**
+     * @param string $world
+     * @return string
+     */
     private function getWorldSourceFolder(string $world): string
     {
         return $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
@@ -182,6 +186,11 @@ class WorldBackupService
         throw new ServiceException(Messages::worldNotFound($world));
     }
 
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
     public function notExistsHistoryIfThrow(?string $world, ?string $history): void
     {
         $this->notExistsWorldBackupIfThrow($world);
@@ -208,6 +217,10 @@ class WorldBackupService
         return is_dir($dir);
     }
 
+    /**
+     * @param null|string $history
+     * @throws ServiceException
+     */
     public function invalidHistoryIfThrow(?string $history): void
     {
         if (is_null($history)) {
@@ -248,11 +261,20 @@ class WorldBackupService
         throw new ServiceException(Messages::worldInvalid());
     }
 
+    /**
+     * @param string $world
+     * @param string $history
+     * @return string
+     */
     private function getHistoryFolder(string $world, string $history): string
     {
         return $this->getWorldBackupFolder($world) . DIRECTORY_SEPARATOR . $history;
     }
 
+    /**
+     * @param string $world
+     * @return string
+     */
     private function getWorldBackupFolder(string $world): string
     {
         return $this->getBackupFolder() . DIRECTORY_SEPARATOR . $world;
@@ -447,6 +469,11 @@ class WorldBackupService
         }
     }
 
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
     public function restore(?string $world, ?string $history): void
     {
         $this->notExistsHistoryIfThrow($world, $history);
@@ -459,14 +486,35 @@ class WorldBackupService
         $this->purgeHistories($world);
     }
 
+    /**
+     * @return null|string
+     */
     public function getRestorePlanWorld(): ?string
     {
-        return $this->settings[self::RESTORE_WORLD];
+        if (array_key_exists(self::RESTORE_WORLD, $this->settings)) {
+            return $this->settings[self::RESTORE_WORLD];
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * @return null|string
+     */
     public function getRestorePlanHistory(): ?string
     {
-        return $this->settings[self::RESTORE_HISTORY];
+        if (array_key_exists(self::RESTORE_HISTORY, $this->settings)) {
+            return $this->settings[self::RESTORE_HISTORY];
+        } else {
+            return null;
+        }
+    }
+
+    public function clearRestore(): void
+    {
+        $this->settings[self::RESTORE_WORLD] = '';
+        $this->settings[self::RESTORE_HISTORY] = '';
+        $this->saveSettings();
     }
 
 }

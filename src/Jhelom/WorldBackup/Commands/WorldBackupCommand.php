@@ -30,7 +30,7 @@ class WorldBackupCommand extends CommandInvoker
     public function __construct(Plugin $plugin)
     {
         parent::__construct(self::COMMAND_NAME, $plugin);
-        $this->setUsage('/wbackup [list|backup|restore|history|set]');
+        $this->setUsage('/wbackup [list|backup|restore|history|set|clear]');
         $this->setDescription(Messages::commandDescription());
         $this->setPermission('Jhelom.command.wbackup');
     }
@@ -52,28 +52,27 @@ class WorldBackupCommand extends CommandInvoker
 
             switch ($operation) {
                 case 'backup':
-                case 'b':
                     $this->backupOperation($sender, $args);
                     break;
 
                 case 'restore':
-                case 'r':
                     $this->restoreOperation($sender, $args);
                     break;
 
                 case 'history':
-                case 'h':
                     $this->historyOperation($sender, $args);
                     break;
 
                 case 'set':
-                case 'c':
                     $this->setOperation($sender, $args);
                     break;
 
                 case 'list':
-                case 'l':
                     $this->listOperation($sender);
+                    break;
+
+                case 'clear':
+                    $this->clearOperation($sender);
                     break;
 
                 default:
@@ -83,6 +82,16 @@ class WorldBackupCommand extends CommandInvoker
         }
 
         return true;
+    }
+
+    /**
+     * @param CommandSender $sender
+     */
+    private function clearOperation(CommandSender $sender): void
+    {
+        $service = WorldBackupService::getInstance();
+        $service->clearRestore();
+        $sender->sendMessage(Messages::clearRestore());
     }
 
     /**
@@ -222,5 +231,6 @@ class WorldBackupCommand extends CommandInvoker
         $sender->sendMessage(Messages::help5());
         $sender->sendMessage(Messages::help6());
         $sender->sendMessage(Messages::help7());
+        $sender->sendMessage(Messages::help8());
     }
 }
