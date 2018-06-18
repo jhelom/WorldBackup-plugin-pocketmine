@@ -18,9 +18,10 @@ use pocketmine\Server;
  */
 class WorldBackupService
 {
-    private const HISTORY_MAX = 'history_max';
-    private const HISTORY_MAX_MIN = 3;
-    private const HISTORY_MAX_MAX = 30;
+    private const HISTORY_LIMIT = 'history_limit';
+    private const HISTORY_LIMIT_MIN = 3;
+    private const HISTORY_LIMIT_MAX = 30;
+    private const HISTORY_LIMIT_DEFAULT = 10;
     private const BACKUP_FOLDER = 'backups';
     private const WORLD_FOLDER = 'worlds';
     private const LAST_AUTO_BACKUP = 'last_auto_backup';
@@ -42,7 +43,7 @@ class WorldBackupService
         $path = $this->getSettingsPath();
 
         $this->settings = JsonFile::load($path, [
-            self::HISTORY_MAX => self::HISTORY_MAX_MAX,
+            self::HISTORY_LIMIT => self::HISTORY_LIMIT_DEFAULT,
             self::LAST_AUTO_BACKUP => '',
             self::RESTORE_WORLD => '',
             self::RESTORE_HISTORY => ''
@@ -356,7 +357,7 @@ class WorldBackupService
      */
     public function getHistoryMax(): int
     {
-        return $this->settings[self::HISTORY_MAX];
+        return $this->settings[self::HISTORY_LIMIT];
     }
 
     /**
@@ -402,7 +403,7 @@ class WorldBackupService
      */
     public function setHistoryMax(int $max): void
     {
-        $this->settings[self::HISTORY_MAX] = max(self::HISTORY_MAX_MIN, min(self::HISTORY_MAX_MAX, $max));
+        $this->settings[self::HISTORY_LIMIT] = max(self::HISTORY_LIMIT_MIN, min(self::HISTORY_LIMIT_MAX, $max));
     }
 
     /**
@@ -450,8 +451,8 @@ class WorldBackupService
     {
         $this->notExistsHistoryIfThrow($world, $history);
 
-        $sourceDir = $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
-        $backupDir = $this->getBackupFolder() . DIRECTORY_SEPARATOR . $world . DIRECTORY_SEPARATOR . $history;
+        $sourceDir = $this->getWorldSourceFolder($world);
+        $backupDir = $this->getHistoryFolder($world, $history);
 
         $this->deleteDirectories($sourceDir);
         $this->copyDirectories($backupDir, $sourceDir);
