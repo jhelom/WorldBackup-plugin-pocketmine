@@ -181,7 +181,7 @@ class WorldBackupCommand extends CommandInvoker
                 break;
 
             default:
-                $sender->sendMessage('=== 現在の設定 === ');
+                $sender->sendMessage(Messages::showSettings());
                 $sender->sendMessage(Messages::setMax($service->getHistoryMax()));
                 break;
         }

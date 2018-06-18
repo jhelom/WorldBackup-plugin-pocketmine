@@ -1,5 +1,4 @@
 command-execute-on-console: '§cこのコマンドはサーバーコンソールから実行してください'
-command-execute-on-player: '§cこのコマンドはゲームから実行してください。'
 
 description: 'ワールドのバックアップと復元'
 
@@ -32,3 +31,5 @@ restore-completed: '§aワールド "{0}" の履歴 "{1}" からの復元が完�
 
 auto-backup-start: '§a全ワールドの自動バックアップを開始しました。'
 auto-backup-end: '§a全ワールドの自動バックアップが完了しました。'
+
+show-settings: '=== バックアップ設定 ==='

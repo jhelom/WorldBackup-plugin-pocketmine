@@ -24,6 +24,14 @@ class Messages
     }
 
     /**
+     * @return string
+     */
+    static public function commandDescription(): string
+    {
+        return self::_getMessage('description');
+    }
+
+    /**
      * @param string $key
      * @param mixed|null ...$args
      * @return string
@@ -37,14 +45,6 @@ class Messages
         $message = self::$messages[$key];
 
         return StringFormat::formatEx($message, $args);
-    }
-
-    /**
-     * @return string
-     */
-    static public function commandDescription(): string
-    {
-        return self::_getMessage('description');
     }
 
     /**
@@ -133,6 +133,11 @@ class Messages
     static public function setMax(int $max): string
     {
         return self::_getMessage('set-max', $max);
+    }
+
+    static public function showSettings(): string
+    {
+        return self::_getMessage('show-settings');
     }
 
     /**

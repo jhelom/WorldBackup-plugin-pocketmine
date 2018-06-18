@@ -147,15 +147,22 @@ class WorldBackupService
 
     /**
      * @param string $world
+     * @param bool $overwrite
      * @throws ServiceException
      */
-    public function backup(string $world): void
+    public function backup(string $world, bool $overwrite = true): void
     {
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
         $history = date('Y-m-d');
         $backupDir = $this->getHistoryFolder($world, $history);
+
+        if ($overwrite === false) {
+            if (is_dir($backupDir)) {
+                return;
+            }
+        }
 
         $this->copyDirectories($sourceDir, $backupDir);
         $this->purgeHistories($world);
@@ -427,6 +434,7 @@ class WorldBackupService
             }
 
             Logging::info(Messages::restoreStart($world, $history));
+            $this->backup($world, false);
             $this->restore($world, $history);
             Logging::info(Messages::restoreCompleted($world, $history));
         } catch (Exception $e) {
