@@ -2,7 +2,8 @@
 branches:
 - master
 projects: [
-WorldBackup:
-path: "WorldBackup-plugin-pocketmine"]
-icon: "assets\icon.png"
+  WorldBackup:
+    path: "WorldBackup-plugin-pocketmine"
+    icon: "assets/icon.png"
+  ]
 ...
