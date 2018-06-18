@@ -24,9 +24,10 @@ class WorldBackupService
     private const HISTORY_LIMIT_DEFAULT = 10;
     private const BACKUP_FOLDER = 'backups';
     private const WORLD_FOLDER = 'worlds';
-    private const LAST_AUTO_BACKUP = 'last_auto_backup';
+    private const LAST_BACKUP = 'last_backup';
     private const RESTORE_WORLD = 'restore_world';
     private const RESTORE_HISTORY = 'restore_history';
+    private const CYCLE = 'cycle';
 
     /** @var WorldBackupService|null */
     static private $instance = null;
@@ -44,7 +45,7 @@ class WorldBackupService
 
         $this->settings = JsonFile::load($path, [
             self::HISTORY_LIMIT => self::HISTORY_LIMIT_DEFAULT,
-            self::LAST_AUTO_BACKUP => '',
+            self::LAST_BACKUP => '',
             self::RESTORE_WORLD => '',
             self::RESTORE_HISTORY => ''
         ]);
@@ -78,14 +79,14 @@ class WorldBackupService
     {
         $today = date('Y_m_d');
 
-        if ($this->settings[self::LAST_AUTO_BACKUP] == $today) {
+        if ($this->settings[self::LAST_BACKUP] == $today) {
             return false;
         }
 
         Logging::info(Messages::autoBackupStart());
 
         $this->backupAll();
-        $this->settings[self::LAST_AUTO_BACKUP] = $today;
+        $this->settings[self::LAST_BACKUP] = $today;
         $this->saveSettings();
 
         Logging::info(Messages::autoBackupEnd());
@@ -517,4 +518,27 @@ class WorldBackupService
         $this->saveSettings();
     }
 
+    public function getCycle(): int
+    {
+        return $this->getSettingValue(self::CYCLE, 1);
+    }
+
+    public function setCycle(int $days): void
+    {
+        $this->settings[self::CYCLE] = $days;
+    }
+
+    public function getSettingValue(string $key, $default = null)
+    {
+        if (array_key_exists($key, $this->settings)) {
+            return $this->settings[$key];
+        } else {
+            return $default;
+        }
+    }
+
+    private function getSettingInt(string $key, int $default = 0): int
+    {
+        return $this->getSettingInt()
+    }
 }

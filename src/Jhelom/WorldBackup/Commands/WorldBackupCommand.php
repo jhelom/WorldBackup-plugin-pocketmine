@@ -189,9 +189,16 @@ class WorldBackupCommand extends CommandInvoker
                 $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryLimit()));
                 break;
 
+            case 'cycle':
+                $days = $args->getInt(1);
+                $service->setCycle($days);
+                $service->saveSettings();
+                $sender->sendMessage(Messages::setCycleCompleted($service->getCycle()));
+
             default:
                 $sender->sendMessage(Messages::showSettings());
                 $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
+                $sender->sendMessage(Messages::setCycle($service->getCycle()));
                 break;
         }
     }

@@ -117,6 +117,16 @@ class Messages extends PluginMessages
         return self::_getMessage('set-max-completed', $max);
     }
 
+    static public function setCycleCompleted(int $days): string
+    {
+        return self::_getMessage('set-cycle-completed', $days);
+    }
+
+    static public function setCycle(int $days): string
+    {
+        return self::_getMessage('set-cycle', $days);
+    }
+
     /**
      * @param int $max
      * @return string
