@@ -310,7 +310,7 @@ class WorldBackupService
         $this->notExistsWorldBackupIfThrow($world);
 
         $dir = $this->getWorldBackupFolder($world);
-        $histories = array_slice($this->getHistories($world), $this->getHistoryMax());
+        $histories = array_slice($this->getHistories($world), $this->getHistoryLimit());
 
         foreach ($histories as $history) {
             $this->deleteDirectories($dir . DIRECTORY_SEPARATOR . $history);
@@ -355,7 +355,7 @@ class WorldBackupService
     /**
      * @return int
      */
-    public function getHistoryMax(): int
+    public function getHistoryLimit(): int
     {
         return $this->settings[self::HISTORY_LIMIT];
     }
@@ -401,7 +401,7 @@ class WorldBackupService
     /**
      * @param int $max
      */
-    public function setHistoryMax(int $max): void
+    public function setHistoryLimit(int $max): void
     {
         $this->settings[self::HISTORY_LIMIT] = max(self::HISTORY_LIMIT_MIN, min(self::HISTORY_LIMIT_MAX, $max));
     }

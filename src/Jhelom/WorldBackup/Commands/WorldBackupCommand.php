@@ -168,21 +168,21 @@ class WorldBackupCommand extends CommandInvoker
         $service = WorldBackupService::getInstance();
 
         switch ($action) {
-            case 'max':
+            case 'limit':
                 $value = $args->getInt();
 
                 if (!is_numeric($value)) {
                     throw new CommandInvokeException(Messages::setMaxInvalid());
                 }
 
-                $service->setHistoryMax($value);
+                $service->setHistoryLimit($value);
                 $service->saveSettings();
-                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryMax()));
+                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryLimit()));
                 break;
 
             default:
                 $sender->sendMessage(Messages::showSettings());
-                $sender->sendMessage(Messages::setMax($service->getHistoryMax()));
+                $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
                 break;
         }
     }
