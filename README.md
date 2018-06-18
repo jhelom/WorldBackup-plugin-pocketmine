@@ -47,7 +47,7 @@ This is because restoring will be incomplete if you change the world's file whil
 ## Set History Limit
 
 ```
-/wbackup set max [int]
+/wbackup set limit [int]
 ```
 
 The default value is 10.
@@ -109,7 +109,7 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 ## バックアップ履歴の上限数を設定する
 
 ```
-/wbackup set max [int]
+/wbackup set limit [int]
 ```
 
 規定値は 10 です。
