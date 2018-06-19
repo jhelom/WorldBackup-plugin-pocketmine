@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\Services;
 
 
-
 use DateTimeImmutable;
 use Exception;
 use Jhelom\Core\CustomLogger;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\ServiceException;
 use Jhelom\Core\Value;
+use Jhelom\WorldBackup\ICalendar;
 use Jhelom\WorldBackup\Main;
 use pocketmine\Server;
 
@@ -32,22 +32,27 @@ class WorldBackupService
     private const DAYS = 'days';
     private const DAYS_MIN = 1;
     private const DAYS_MAX = 999;
-    private const DATE_FORMAT = 'Y-m-d';
 
     private $settings = [];
 
     /** @var Main */
     private $main;
+
     /** @var CustomLogger */
     private $logger;
+
+    /** @var ICalendar */
+    private $calendar;
 
     /**
      * WorldBackupService constructor.
      * @param Main $main
+     * @param ICalendar $calendar
      */
-    public function __construct(Main $main)
+    public function __construct(Main $main, ICalendar $calendar)
     {
         $this->main = $main;
+        $this->calendar = $calendar;
         $this->logger = new CustomLogger($main->getLogger());
         $this->loadSettings();
     }
@@ -74,30 +79,21 @@ class WorldBackupService
     }
 
     /**
-     * @return DateTimeImmutable
-     * @throws Exception
-     */
-    private function getToday(): DateTimeImmutable
-    {
-        return new DateTimeImmutable();
-    }
-
-    /**
      * @return bool
      * @throws ServiceException
      */
     public function autoBackup(): bool
     {
-        $today = $this->getToday();
-        $this->logger->debug('today = {0}', $today->format(self::DATE_FORMAT));
+        $today = $this->calendar->getToday();
+        $this->logger->debug('today = {0}', $today->format(ICalendar::DATE_FORMAT));
 
         $s = Value::getString(self::LAST_BACKUP, $this->settings, '2000-01-01');
         $this->logger->debug('last backup string = {0}', $s);
 
-        $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
+        $last = DateTimeImmutable::createFromFormat(ICalendar::DATE_FORMAT, $s);
 
         if ($last !== false) {
-            $this->logger->debug('last backup date   = {0}', $last->format(self::DATE_FORMAT));
+            $this->logger->debug('last backup date   = {0}', $last->format(ICalendar::DATE_FORMAT));
             $diff = $today->diff($last);
             $this->logger->debug('diff days = {0}', $diff->days);
 
@@ -109,11 +105,19 @@ class WorldBackupService
         $this->logger->info($this->main->getMessages()->autoBackupStart());
 
         $this->backupAll();
-        $this->settings[self::LAST_BACKUP] = $today->format(self::DATE_FORMAT);
+        $this->settings[self::LAST_BACKUP] = $today->format(ICalendar::DATE_FORMAT);
         $this->saveSettings();
 
         $this->logger->info($this->main->getMessages()->autoBackupEnd());
         return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDays(): int
+    {
+        return Value::getInt(self::DAYS, $this->settings, 1);
     }
 
     /**
@@ -175,7 +179,7 @@ class WorldBackupService
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
-        $history = $this->getToday()->format(self::DATE_FORMAT);
+        $history = $this->calendar->getToday()->format(ICalendar::DATE_FORMAT);
         $backupDir = $this->getHistoryFolder($world, $history);
 
         if ($overwrite === false) {
@@ -543,14 +547,6 @@ class WorldBackupService
         $this->settings[self::RESTORE_WORLD] = '';
         $this->settings[self::RESTORE_HISTORY] = '';
         $this->saveSettings();
-    }
-
-    /**
-     * @return int
-     */
-    public function getDays(): int
-    {
-        return Value::getInt(self::DAYS, $this->settings, 1);
     }
 
     /**

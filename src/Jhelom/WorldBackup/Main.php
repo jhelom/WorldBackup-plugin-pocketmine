@@ -13,6 +13,7 @@ use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
 use pocketmine\scheduler\Task;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -32,11 +33,34 @@ class Main extends PluginBaseEx implements Listener
     /** @var Task */
     private $task;
 
+    /** @var ICalendar */
+    private $calendar;
+
     public function onLoad()
     {
         parent::onLoad();
 
-        $this->backupService = new WorldBackupService($this);
+        $this->saveDefaultConfig();
+        $this->reloadConfig();
+
+        $isDebug = $this->getConfig()->get('debug', false);
+
+        if ($isDebug) {
+            $colors = [
+                TextFormat::GREEN,
+                TextFormat::AQUA,
+                TextFormat::BLUE,
+                TextFormat::DARK_PURPLE,
+                TextFormat::RED
+            ];
+
+            foreach ($colors as $color) {
+                $this->getLogger()->warning($color . '*** DEBUG MODE ***');
+            }
+        }
+
+        $this->calendar = $isDebug ? new TestCalendar($this) : new Calendar();
+        $this->backupService = new WorldBackupService($this, $this->calendar);
 
         // messages
 
@@ -65,7 +89,7 @@ class Main extends PluginBaseEx implements Listener
         // task
 
         $this->task = new TimerTask($this);
-        $interval = 1200 * 60;  // 1 minutes * 60 * 12 = 1 hour
+        $interval = $this->calendar->getInterval();
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
