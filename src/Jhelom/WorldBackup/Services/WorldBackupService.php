@@ -29,6 +29,8 @@ class WorldBackupService
     private const RESTORE_WORLD = 'restore_world';
     private const RESTORE_HISTORY = 'restore_history';
     private const DAYS = 'days';
+    private const DAYS_MIN = 1;
+    private const DAYS_MAX = 999;
 
     /** @var WorldBackupService|null */
     static private $instance = null;
@@ -80,8 +82,9 @@ class WorldBackupService
     public function autoBackup(): bool
     {
         $today = date('Y_m_d');
+        $last_backup = Value::getString(self::LAST_BACKUP, $this->settings, '');
 
-        if ($this->settings[self::LAST_BACKUP] == $today) {
+        if ($last_backup == $today) {
             return false;
         }
 
@@ -149,7 +152,7 @@ class WorldBackupService
      * @param bool $overwrite
      * @throws ServiceException
      */
-    public function backup(string $world, bool $overwrite = true): void
+    public function backup(?string $world, bool $overwrite = true): void
     {
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
@@ -389,6 +392,7 @@ class WorldBackupService
     public function setHistoryLimit(int $max): void
     {
         $this->settings[self::HISTORY_LIMIT] = max(self::HISTORY_LIMIT_MIN, min(self::HISTORY_LIMIT_MAX, $max));
+        $this->saveSettings();
     }
 
     /**
@@ -533,6 +537,7 @@ class WorldBackupService
      */
     public function setDays(int $days): void
     {
-        $this->settings[self::DAYS] = $days;
+        $this->settings[self::DAYS] = max(self::DAYS_MIN, min(self::DAYS_MAX, $days));
+        $this->saveSettings();
     }
 }

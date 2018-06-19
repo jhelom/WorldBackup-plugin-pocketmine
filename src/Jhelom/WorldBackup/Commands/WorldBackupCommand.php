@@ -178,27 +178,30 @@ class WorldBackupCommand extends CommandInvoker
 
         switch ($action) {
             case 'limit':
-                $value = $args->getInt();
+                $limit = $args->getInt();
 
-                if (!is_numeric($value)) {
+                if (!is_numeric($limit)) {
                     throw new CommandInvokeException(Messages::setLimitInvalid());
                 }
 
-                $service->setHistoryLimit($value);
-                $service->saveSettings();
+                $service->setHistoryLimit($limit);
                 $sender->sendMessage(Messages::setLimitCompleted($service->getHistoryLimit()));
                 break;
 
             case 'days':
-                $days = $args->getInt(1);
+                $days = $args->getInt();
+
+                if (!is_numeric($days)) {
+                    throw new CommandInvokeException(Messages::setDaysInvalid());
+                }
+
                 $service->setDays($days);
-                $service->saveSettings();
                 $sender->sendMessage(Messages::setCycleCompleted($service->getDays()));
                 break;
 
             default:
                 $sender->sendMessage(Messages::showSettings());
-                $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
+                $sender->sendMessage(Messages::setLimit($service->getHistoryLimit()));
                 $sender->sendMessage(Messages::setDays($service->getDays()));
                 break;
         }
@@ -240,5 +243,6 @@ class WorldBackupCommand extends CommandInvoker
         $sender->sendMessage(Messages::help6());
         $sender->sendMessage(Messages::help7());
         $sender->sendMessage(Messages::help8());
+        $sender->sendMessage(Messages::help9());
     }
 }

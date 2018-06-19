@@ -3,15 +3,12 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup;
 
-use Jhelom\Core\Forms\Form;
-use Jhelom\Core\Logging;
+
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
-use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\utils\Config;
 
 /**
@@ -39,15 +36,20 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
-        parent::onLoad();
         $this->getLogger()->debug('§aonLoad');
 
+        parent::onLoad();
         Main::$instance = $this;
 
         // config
 
-        $this->saveResource('messages.jpn.yml', true);
-        $this->saveResource('messages.eng.yml', true);
+        $supportedLanguages = ['jpn', 'eng'];
+
+        foreach ($supportedLanguages as $lang) {
+            $this->saveResource('messages.' . $lang . '.yml', true);
+
+        }
+
         $this->saveDefaultConfig();
         $this->reloadConfig();
         $this->config = new Config($this->getDataFolder() . 'config.yml', Config::YAML, []);
@@ -69,9 +71,9 @@ class Main extends PluginBaseEx implements Listener
 
     public function onEnable()
     {
+        $this->getLogger()->debug('onLoad');
         parent::onEnable();
 
-        Logging::debug('onLoad');
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
         $updater->update();
 
@@ -82,11 +84,11 @@ class Main extends PluginBaseEx implements Listener
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
-            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1200, $interval);
         } else {
             $this->getLogger()->debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1200, $interval);
         }
 
         // register
@@ -98,22 +100,6 @@ class Main extends PluginBaseEx implements Listener
         $this->setupCommands([
             new WorldBackupCommand($this)
         ]);
-    }
-
-    /**
-     * @param PlayerQuitEvent $event
-     */
-    public function onPlayerQuit(PlayerQuitEvent $event)
-    {
-        Form::purge($event->getPlayer()->getLowerCaseName());
-    }
-
-    /**
-     * @param LevelLoadEvent $event
-     */
-    public function onLevelLoad(LevelLoadEvent $event)
-    {
-        Logging::debug('§aLevelLoadEvent:' . $event->getLevel()->getName());
     }
 }
 

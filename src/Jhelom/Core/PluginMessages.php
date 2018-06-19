@@ -19,7 +19,11 @@ abstract class PluginMessages
      */
     final static public function load(string $path): void
     {
-        self::$messages = (new Config($path, Config::YAML, []))->getAll();
+        if (is_file($path)) {
+            self::$messages = (new Config($path, Config::YAML, []))->getAll();
+        } else {
+            Logging::warning('File not found. "{0}"', $path);
+        }
     }
 
 

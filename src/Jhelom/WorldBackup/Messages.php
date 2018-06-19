@@ -105,16 +105,16 @@ class Messages extends PluginMessages
      */
     static public function setLimitInvalid(): string
     {
-        return self::_getMessage('set-max-invalid');
+        return self::_getMessage('set-limit-invalid');
     }
 
     /**
-     * @param int $max
+     * @param int $limit
      * @return string
      */
-    static public function setLimitCompleted(int $max): string
+    static public function setLimitCompleted(int $limit): string
     {
-        return self::_getMessage('set-max-completed', $max);
+        return self::_getMessage('set-limit-completed', $limit);
     }
 
     static public function setCycleCompleted(int $days): string
@@ -127,13 +127,18 @@ class Messages extends PluginMessages
         return self::_getMessage('set-days', $days);
     }
 
+    static public function setDaysInvalid(): string
+    {
+        return self::_getMessage('set-days-invalid');
+    }
+
     /**
-     * @param int $max
+     * @param int $limit
      * @return string
      */
-    static public function setMax(int $max): string
+    static public function setLimit(int $limit): string
     {
-        return self::_getMessage('set-max', $max);
+        return self::_getMessage('set-limit', $limit);
     }
 
     /**
@@ -208,6 +213,13 @@ class Messages extends PluginMessages
         return self::_getMessage('help8');
     }
 
+    /**
+     * @return string
+     */
+    static public function help9(): string
+    {
+        return self::_getMessage('help9');
+    }
     /**
      * @return string
      */

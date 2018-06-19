@@ -57,6 +57,12 @@ The history limit can be set in a range from at least 3 to a maximum of 30.
 If the number of histories backed up exceeds the upper limit, it will be deleted from the oldest history.
 
 
+## Set Backup Cycle Days
+
+```
+wbackup set days [int]
+```
+
 ---
 
 
@@ -124,7 +130,13 @@ wbackup set limit [int]
 バックアップされた履歴の世代数が上限を超えた場合、一番古い世代から削除されます。
 
 
-# 仕様
+## バックアップ周期の日数を設定する
+
+```
+wbackup set days [int]
+```
+
+# 構成
 
 
 バックアップされたワールドのファイルはプラグインフォルダの backups 配下に保存されます。
