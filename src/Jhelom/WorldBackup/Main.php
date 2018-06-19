@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup;
 
-use Jhelom\Core\Forms\Form;
-use Jhelom\Core\Logging;
+
+use Exception;
+use Jhelom\Core\CommandInvoker;
+use Jhelom\Core\ISupportedLanguage;
 use Jhelom\Core\PluginBaseEx;
-use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\utils\Config;
+use pocketmine\scheduler\Task;
 
 /**
  * Class Main
@@ -23,95 +23,62 @@ class Main extends PluginBaseEx implements Listener
     private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
     private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
 
-    /** @var Main */
-    static private $instance;
-    /** @var Config */
-    private $config;
-    private $task;
+    /** @var WorldBackupService */
+    private $backupService;
 
-    /**
-     * @return Main
-     */
-    static public function getInstance(): Main
-    {
-        return Main::$instance;
-    }
+    /** @var Messages */
+    private $messages;
+
+    /** @var Task */
+    private $task;
 
     public function onLoad()
     {
         parent::onLoad();
-        $this->getLogger()->debug('§aonLoad');
 
-        Main::$instance = $this;
-
-        // config
-
-        $this->saveResource('messages.jpn.yml', true);
-        $this->saveResource('messages.eng.yml', true);
-        $this->saveDefaultConfig();
-        $this->reloadConfig();
-        $this->config = new Config($this->getDataFolder() . 'config.yml', Config::YAML, []);
+        $this->backupService = new WorldBackupService($this);
 
         // messages
 
-        $message_file = $this->getDataFolder() . 'messages.' . $this->getServer()->getLanguage()->getLang() . '.yml';
+        $message_file = $this->getMessagesPath($this->getServer()->getLanguage()->getLang());
 
         if (!is_file($message_file)) {
-            $message_file = $this->getDataFolder() . 'messages.eng.yml';
+            $message_file = $this->getMessagesPath(ISupportedLanguage::ENGLISH);
         }
 
-        Messages::load($message_file);
+        $this->messages = new Messages($this->getLogger(), $message_file);
 
         // restore
 
-        WorldBackupService::getInstance()->executeRestorePlan();
+        try {
+            $this->backupService->autoBackup();
+            $this->backupService->executeRestorePlan();
+        } catch (Exception $e) {
+            $this->getLogger()->logException($e);
+        }
     }
 
     public function onEnable()
     {
         parent::onEnable();
 
-        Logging::debug('onLoad');
-        $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
-        $updater->update();
-
         // task
 
-        $this->task = new TimerTask();
-        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 24 = 12 hour
+        $this->task = new TimerTask($this);
+        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
-            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         } else {
             $this->getLogger()->debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         }
 
         // register
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-
-        // setup commands
-
-        $this->setupCommands([
-            new WorldBackupCommand($this)
-        ]);
-    }
-
-    /**
-     * @param PlayerQuitEvent $event
-     */
-    public function onPlayerQuit(PlayerQuitEvent $event)
-    {
-        Form::purge($event->getPlayer()->getLowerCaseName());
-    }
-
-    public function onDisable()
-    {
-        parent::onDisable();
-        $this->getLogger()->info('§aonDisable');
     }
 
     /**
@@ -119,7 +86,60 @@ class Main extends PluginBaseEx implements Listener
      */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        Logging::debug('§aLevelLoadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->debug('LevelLoadEvent: ' . $event->getLevel()->getName());
+    }
+
+    /**
+     * @return WorldBackupService
+     */
+    public function getBackupService(): WorldBackupService
+    {
+        return $this->backupService;
+    }
+
+    /**
+     * @return Messages
+     */
+    public function getMessages(): Messages
+    {
+        return $this->messages;
+    }
+
+    /**
+     * @return CommandInvoker[]
+     */
+    protected function setupCommands(): array
+    {
+        return [
+            new WorldBackupCommand($this)
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPluginUpdateUrlDomain(): string
+    {
+        return self::PLUGIN_DOWNLOAD_URL_DOMAIN;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPluginUpdateUrlPath(): string
+    {
+        return self::PLUGIN_DOWNLOAD_URL_PATH;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getSupportedLanguages(): array
+    {
+        return [
+            ISupportedLanguage::ENGLISH,
+            ISupportedLanguage::JAPANESE
+        ];
     }
 }
 

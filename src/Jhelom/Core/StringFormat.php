@@ -16,12 +16,7 @@ class StringFormat
      */
     static public function format(string $message, ... $args): string
     {
-        foreach ($args as $index => $value) {
-            $search = '{' . $index . '}';
-            $message = str_replace($search, $value, $message);
-        }
-
-        return $message;
+        return self::formatEx($message, $args);
     }
 
     /**

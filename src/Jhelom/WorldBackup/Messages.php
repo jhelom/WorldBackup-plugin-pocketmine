@@ -4,88 +4,61 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 
-use Jhelom\Core\StringFormat;
-use pocketmine\utils\Config;
+use Jhelom\Core\PluginMessages;
 
 /**
  * Class Messages
  * @package Jhelom\WorldBackup
  */
-class Messages
+class Messages extends PluginMessages
 {
-    static private $messages = [];
-
     /**
-     * @param string $path
+     * @return string
      */
-    static public function load(string $path): void
+    public function commandDescription(): string
     {
-        self::$messages = (new Config($path, Config::YAML, []))->getAll();
+        return $this->_getMessage('description');
     }
 
     /**
      * @return string
      */
-    static public function commandDescription(): string
+    public function worldRequired(): string
     {
-        return self::_getMessage('description');
-    }
-
-    /**
-     * @param string $key
-     * @param mixed|null ...$args
-     * @return string
-     */
-    static private function _getMessage(string $key, ... $args): string
-    {
-        if (!array_key_exists($key, self::$messages)) {
-            return '§c' . $key . ': ' . join(', ', $args);
-        }
-
-        $message = self::$messages[$key];
-
-        return StringFormat::formatEx($message, $args);
+        return $this->_getMessage('world-required');
     }
 
     /**
      * @return string
      */
-    static public function worldRequired(): string
+    public function worldInvalid(): string
     {
-        return self::_getMessage('world-required');
-    }
-
-    /**
-     * @return string
-     */
-    static public function worldInvalid(): string
-    {
-        return self::_getMessage('world-invalid');
+        return $this->_getMessage('world-invalid');
     }
 
     /**
      * @param string $world
      * @return string
      */
-    static public function backupCompleted(string $world): string
+    public function backupCompleted(string $world): string
     {
-        return self::_getMessage('backup-completed', $world);
+        return $this->_getMessage('backup-completed', $world);
     }
 
     /**
      * @return string
      */
-    static public function clearRestore(): string
+    public function clearRestore(): string
     {
-        return self::_getMessage('restore-clear');
+        return $this->_getMessage('restore-clear');
     }
 
     /**
      * @return string
      */
-    static public function historyRequired(): string
+    public function historyRequired(): string
     {
-        return self::_getMessage('history-required');
+        return $this->_getMessage('history-required');
     }
 
     /**
@@ -93,9 +66,9 @@ class Messages
      * @param string $history
      * @return string
      */
-    static public function restorePlan(string $world, string $history): string
+    public function restorePlan(string $world, string $history): string
     {
-        return self::_getMessage('restore-plan', $world, $history);
+        return $this->_getMessage('restore-plan', $world, $history);
     }
 
     /**
@@ -103,9 +76,9 @@ class Messages
      * @param string $history
      * @return string
      */
-    static public function restoreStart(string $world, string $history): string
+    public function restoreStart(string $world, string $history): string
     {
-        return self::_getMessage('restore-start', $world, $history);
+        return $this->_getMessage('restore-start', $world, $history);
     }
 
     /**
@@ -113,141 +86,121 @@ class Messages
      * @param string $history
      * @return string
      */
-    static public function restoreCompleted(string $world, string $history): string
+    public function restoreCompleted(string $world, string $history): string
     {
-        return self::_getMessage('restore-completed', $world, $history);
+        return $this->_getMessage('restore-completed', $world, $history);
     }
 
     /**
      * @param string $world
      * @return string
      */
-    static public function historyList(string $world): string
+    public function historyList(string $world): string
     {
-        return self::_getMessage('history-list', $world);
+        return $this->_getMessage('history-list', $world);
     }
 
     /**
      * @return string
      */
-    static public function setMaxInvalid(): string
+    public function setLimitInvalid(): string
     {
-        return self::_getMessage('set-max-invalid');
+        return $this->_getMessage('set-limit-invalid');
     }
 
     /**
-     * @param int $max
+     * @param int $limit
      * @return string
      */
-    static public function setMaxCompleted(int $max): string
+    public function setLimitCompleted(int $limit): string
     {
-        return self::_getMessage('set-max-completed', $max);
+        return $this->_getMessage('set-limit-completed', $limit);
     }
 
     /**
-     * @param int $max
+     * @param int $days
      * @return string
      */
-    static public function setMax(int $max): string
+    public function setDaysCompleted(int $days): string
     {
-        return self::_getMessage('set-max', $max);
+        return $this->_getMessage('set-days-completed', $days);
     }
 
     /**
+     * @param int $days
      * @return string
      */
-    static public function showSettings(): string
+    public function setDays(int $days): string
     {
-        return self::_getMessage('show-settings');
-    }
-
-    /**
-     * @return string
-     */
-    static public function help1(): string
-    {
-        return self::_getMessage('help1');
+        return $this->_getMessage('set-days', $days);
     }
 
     /**
      * @return string
      */
-    static public function help2(): string
+    public function setDaysInvalid(): string
     {
-        return self::_getMessage('help2');
+        return $this->_getMessage('set-days-invalid');
+    }
+
+    /**
+     * @param int $limit
+     * @return string
+     */
+    public function setLimit(int $limit): string
+    {
+        return $this->_getMessage('set-limit', $limit);
     }
 
     /**
      * @return string
      */
-    static public function help3(): string
+    public function showSettings(): string
     {
-        return self::_getMessage('help3');
+        return $this->_getMessage('show-settings');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function help(): array
+    {
+        return [
+            $this->_getMessage('help1'),
+            $this->_getMessage('help2'),
+            $this->_getMessage('help3'),
+            $this->_getMessage('help4'),
+            $this->_getMessage('help5'),
+            $this->_getMessage('help6'),
+            $this->_getMessage('help7'),
+            $this->_getMessage('help8'),
+            $this->_getMessage('help9'),
+        ];
     }
 
     /**
      * @return string
      */
-    static public function help4(): string
+    public function autoBackupStart(): string
     {
-        return self::_getMessage('help4');
+        return $this->_getMessage('auto-backup-start');
     }
 
     /**
      * @return string
      */
-    static public function help5(): string
+    public function autoBackupEnd(): string
     {
-        return self::_getMessage('help5');
-    }
-
-    /**
-     * @return string
-     */
-    static public function help6(): string
-    {
-        return self::_getMessage('help6');
-    }
-
-    /**
-     * @return string
-     */
-    static public function help7(): string
-    {
-        return self::_getMessage('help7');
-    }
-
-    /**
-     * @return string
-     */
-    static public function help8(): string
-    {
-        return self::_getMessage('help8');
-    }
-
-    /**
-     * @return string
-     */
-    static public function autoBackupStart(): string
-    {
-        return self::_getMessage('auto-backup-start');
-    }
-
-    /**
-     * @return string
-     */
-    static public function autoBackupEnd(): string
-    {
-        return self::_getMessage('auto-backup-end');
+        return $this->_getMessage('auto-backup-end');
     }
 
     /**
      * @param string $world
      * @return string
      */
-    static public function worldNotFound(string $world): string
+    public function worldNotFound(string $world): string
     {
-        return self::_getMessage('world-not-found', $world);
+        return $this->_getMessage('world-not-found', $world);
     }
 
     /**
@@ -255,24 +208,24 @@ class Messages
      * @param string $history
      * @return string
      */
-    static public function historyNotFound(string $world, string $history): string
+    public function historyNotFound(string $world, string $history): string
     {
-        return self::_getMessage('history-not-found', $world, $history);
+        return $this->_getMessage('history-not-found', $world, $history);
     }
 
     /**
      * @return string
      */
-    static public function historyInvalid(): string
+    public function historyInvalid(): string
     {
-        return self::_getMessage('history-invalid');
+        return $this->_getMessage('history-invalid');
     }
 
     /**
      * @return string
      */
-    static public function executeOnConsole(): string
+    public function executeOnConsole(): string
     {
-        return self::_getMessage('command-execute-on-console');
+        return $this->_getMessage('command-execute-on-console');
     }
 }

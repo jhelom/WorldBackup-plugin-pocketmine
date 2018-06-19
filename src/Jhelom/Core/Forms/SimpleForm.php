@@ -16,7 +16,7 @@ class SimpleForm extends Form
     private const BUTTONS = 'buttons';
 
 
-    /** @var SimpleFormCloseAction */
+    /** @var ISimpleFormCloseAction */
     private $closeAction;
 
     /** @var bool */
@@ -64,10 +64,10 @@ class SimpleForm extends Form
     }
 
     /**
-     * @param SimpleFormCloseAction $action
+     * @param ISimpleFormCloseAction $action
      * @return SimpleForm
      */
-    public function onClose(SimpleFormCloseAction $action): SimpleForm
+    public function onClose(ISimpleFormCloseAction $action): SimpleForm
     {
         $this->closeAction = $action;
         return $this;
@@ -112,7 +112,7 @@ class SimpleForm extends Form
 
         $action = $this->closeAction;
 
-        if ($action instanceof SimpleFormCloseAction) {
+        if ($action instanceof ISimpleFormCloseAction) {
             $action->onAction($player, $this);
         }
     }

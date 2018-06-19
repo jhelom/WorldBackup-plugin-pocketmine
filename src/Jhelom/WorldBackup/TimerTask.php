@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 use Jhelom\Core\ServiceException;
-use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\scheduler\Task;
 
 /**
@@ -13,6 +12,17 @@ use pocketmine\scheduler\Task;
  */
 class TimerTask extends Task
 {
+    private $main;
+
+    /**
+     * TimerTask constructor.
+     * @param Main $main
+     */
+    public function __construct(Main $main)
+    {
+        $this->main = $main;
+    }
+
     /**
      * Actions to execute when run
      *
@@ -23,6 +33,6 @@ class TimerTask extends Task
      */
     public function onRun(int $currentTick)
     {
-        WorldBackupService::getInstance()->autoBackup();
+        $this->main->getBackupService()->autoBackup();
     }
 }

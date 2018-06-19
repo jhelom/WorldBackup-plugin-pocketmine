@@ -8,11 +8,9 @@ use Jhelom\Core\CommandArguments;
 use Jhelom\Core\CommandInvokeException;
 use Jhelom\Core\CommandInvoker;
 use Jhelom\Core\ServiceException;
-use Jhelom\WorldBackup\Messages;
-use Jhelom\WorldBackup\Services\WorldBackupService;
+use Jhelom\WorldBackup\Main;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
-use pocketmine\plugin\Plugin;
 
 
 /**
@@ -22,16 +20,18 @@ use pocketmine\plugin\Plugin;
 class WorldBackupCommand extends CommandInvoker
 {
     private const COMMAND_NAME = 'wbackup';
+    private $main;
 
     /**
      * WorldBackupCommand constructor.
-     * @param Plugin $plugin
+     * @param Main $main
      */
-    public function __construct(Plugin $plugin)
+    public function __construct(Main $main)
     {
-        parent::__construct(self::COMMAND_NAME, $plugin);
+        parent::__construct(self::COMMAND_NAME, $main);
+        $this->main = $main;
         $this->setUsage('/wbackup [list|backup|restore|history|set|clear]');
-        $this->setDescription(Messages::commandDescription());
+        $this->setDescription($this->main->getMessages()->commandDescription());
         $this->setPermission('Jhelom.command.wbackup');
     }
 
@@ -45,7 +45,7 @@ class WorldBackupCommand extends CommandInvoker
     protected function onInvoke(CommandSender $sender, CommandArguments $args): bool
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage(Messages::executeOnConsole());
+            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
             return true;
         } else {
             $operation = strtolower($args->getString(''));
@@ -89,9 +89,8 @@ class WorldBackupCommand extends CommandInvoker
      */
     private function clearOperation(CommandSender $sender): void
     {
-        $service = WorldBackupService::getInstance();
-        $service->clearRestore();
-        $sender->sendMessage(Messages::clearRestore());
+        $this->main->getBackupService()->clearRestore();
+        $sender->sendMessage($this->main->getMessages()->clearRestore());
     }
 
     /**
@@ -102,8 +101,8 @@ class WorldBackupCommand extends CommandInvoker
     private function backupOperation(CommandSender $sender, CommandArguments $args): void
     {
         $world = $args->getString();
-        WorldBackupService::getInstance()->backup($world);
-        $sender->sendMessage(Messages::backupCompleted($world));
+        $this->main->getBackupService()->backup($world);
+        $sender->sendMessage($this->main->getMessages()->backupCompleted($world));
     }
 
     /**
@@ -116,10 +115,8 @@ class WorldBackupCommand extends CommandInvoker
         $world = $args->getString();
         $history = $args->getString();
 
-        $service = WorldBackupService::getInstance();
-
         try {
-            $service->notExistsWorldBackupIfThrow($world);
+            $this->main->getBackupService()->notExistsWorldBackupIfThrow($world);
         } catch (ServiceException $e) {
             $sender->sendMessage($e->getMessage());
             $this->listOperation($sender);
@@ -127,15 +124,15 @@ class WorldBackupCommand extends CommandInvoker
         }
 
         try {
-            $service->notExistsHistoryIfThrow($world, $history);
+            $this->main->getBackupService()->notExistsHistoryIfThrow($world, $history);
         } catch (ServiceException $e) {
             $sender->sendMessage($e->getMessage());
             $this->historyOperation($sender, new CommandArguments([$world]));
             return;
         }
 
-        $service->restorePlan($world, $history);
-        $sender->sendMessage(Messages::restorePlan($world, $history));
+        $this->main->getBackupService()->restorePlan($world, $history);
+        $sender->sendMessage($this->main->getMessages()->restorePlan($world, $history));
 
     }
 
@@ -147,10 +144,10 @@ class WorldBackupCommand extends CommandInvoker
     private function historyOperation(CommandSender $sender, CommandArguments $args): void
     {
         $world = $args->getString('');
-        $service = WorldBackupService::getInstance();
+        $service = $this->main->getBackupService();
         $histories = $service->getHistories($world);
 
-        $sender->sendMessage(Messages::historyList($world));
+        $sender->sendMessage($this->main->getMessages()->historyList($world));
         $sender->sendMessage('+-----+------------------+');
         $sender->sendMessage('| No. | BACKUP DATE      |');
         $sender->sendMessage('+-----+------------------+');
@@ -174,24 +171,35 @@ class WorldBackupCommand extends CommandInvoker
     private function setOperation(CommandSender $sender, CommandArguments $args): void
     {
         $action = strtolower($args->getString(''));
-        $service = WorldBackupService::getInstance();
+        $service = $this->main->getBackupService();
 
         switch ($action) {
             case 'limit':
-                $value = $args->getInt();
+                $limit = $args->getInt();
 
-                if (!is_numeric($value)) {
-                    throw new CommandInvokeException(Messages::setMaxInvalid());
+                if (!is_numeric($limit)) {
+                    throw new CommandInvokeException($this->main->getMessages()->setLimitInvalid());
                 }
 
-                $service->setHistoryLimit($value);
-                $service->saveSettings();
-                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryLimit()));
+                $service->setHistoryLimit($limit);
+                $sender->sendMessage($this->main->getMessages()->setLimitCompleted($service->getHistoryLimit()));
+                break;
+
+            case 'days':
+                $days = $args->getInt();
+
+                if (!is_numeric($days)) {
+                    throw new CommandInvokeException($this->main->getMessages()->setDaysInvalid());
+                }
+
+                $service->setDays($days);
+                $sender->sendMessage($this->main->getMessages()->setDaysCompleted($service->getDays()));
                 break;
 
             default:
-                $sender->sendMessage(Messages::showSettings());
-                $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
+                $sender->sendMessage($this->main->getMessages()->showSettings());
+                $sender->sendMessage($this->main->getMessages()->setLimit($service->getHistoryLimit()));
+                $sender->sendMessage($this->main->getMessages()->setDays($service->getDays()));
                 break;
         }
     }
@@ -202,7 +210,7 @@ class WorldBackupCommand extends CommandInvoker
      */
     private function listOperation(CommandSender $sender): void
     {
-        $service = WorldBackupService::getInstance();
+        $service = $this->main->getBackupService();
         $worlds = $service->getBackupWorlds();
 
         $sender->sendMessage('+-----------------+------------------+---------+');
@@ -224,13 +232,8 @@ class WorldBackupCommand extends CommandInvoker
      */
     private function help(CommandSender $sender): void
     {
-        $sender->sendMessage(Messages::help1());
-        $sender->sendMessage(Messages::help2());
-        $sender->sendMessage(Messages::help3());
-        $sender->sendMessage(Messages::help4());
-        $sender->sendMessage(Messages::help5());
-        $sender->sendMessage(Messages::help6());
-        $sender->sendMessage(Messages::help7());
-        $sender->sendMessage(Messages::help8());
+        foreach ($this->main->getMessages()->help() as $help) {
+            $sender->sendMessage($help);
+        }
     }
 }

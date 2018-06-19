@@ -16,9 +16,6 @@ use pocketmine\plugin\Plugin;
  */
 abstract class CommandInvoker extends PluginCommand implements CommandExecutor
 {
-    /** @var Plugin */
-    private $plugin;
-
     /**
      * CommandInvoker constructor.
      * @param string $name
@@ -27,7 +24,6 @@ abstract class CommandInvoker extends PluginCommand implements CommandExecutor
     public function __construct(string $name, Plugin $plugin)
     {
         parent::__construct($name, $plugin);
-        $this->plugin = $plugin;
         $this->setExecutor($this);
     }
 

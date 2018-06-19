@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Jhelom\Core\Forms;
 
 
-use Jhelom\Core\Logging;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
 use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
@@ -53,7 +52,6 @@ abstract class Form
             unset(self::$forms[$playerName][$formId]);
 
             if (!is_null($form)) {
-                Logging::debug('form #' . $formId . ' close');
                 $result = json_decode($pk->formData, true);
                 $form->onProcess($player, $result);
             }
@@ -102,7 +100,6 @@ abstract class Form
         }
 
         $this->id = mt_rand(0, 30000);
-        Logging::debug('form #' . $this->id . ' send');
         self::$forms[$playerName][$this->getId()] = $this;
 
         $pk = new ModalFormRequestPacket();

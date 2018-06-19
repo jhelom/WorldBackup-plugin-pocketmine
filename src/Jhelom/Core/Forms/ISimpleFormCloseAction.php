@@ -7,14 +7,14 @@ namespace Jhelom\Core\Forms;
 use pocketmine\Player;
 
 /**
- * Class SimpleFormCloseAction
+ * Interface ISimpleFormCloseAction
  * @package Jhelom\Core\Forms
  */
-abstract class SimpleFormCloseAction
+interface ISimpleFormCloseAction
 {
     /**
      * @param Player $player
      * @param SimpleForm $form
      */
-    abstract public function onAction(Player $player, SimpleForm $form): void;
+    public function onAction(Player $player, SimpleForm $form): void;
 }
