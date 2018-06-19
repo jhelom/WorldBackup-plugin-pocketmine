@@ -13,7 +13,6 @@ use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -40,7 +39,7 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
-        $this->getLogger()->debug(TextFormat::YELLOW . 'onLoad');
+        $this->getLogger()->debug('onLoad');
 
         parent::onLoad();
         Main::$instance = $this;
@@ -82,7 +81,7 @@ class Main extends PluginBaseEx implements Listener
 
     public function onEnable()
     {
-        $this->getLogger()->debug(TextFormat::YELLOW . 'onEnable');
+        $this->getLogger()->debug('onEnable');
         parent::onEnable();
 
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
@@ -115,7 +114,7 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        $this->getLogger()->debug(TextFormat::YELLOW . 'LevelLoadEvent: ' . $event->getLevel()->getName());
+        $this->getLogger()->debug('LevelLoadEvent: ' . $event->getLevel()->getName());
     }
 }
 
