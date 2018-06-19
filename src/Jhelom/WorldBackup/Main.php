@@ -4,12 +4,16 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 
+use Exception;
+use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
+use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -36,7 +40,7 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
-        $this->getLogger()->debug('§aonLoad');
+        $this->getLogger()->debug(TextFormat::YELLOW . 'onLoad');
 
         parent::onLoad();
         Main::$instance = $this;
@@ -66,12 +70,19 @@ class Main extends PluginBaseEx implements Listener
 
         // restore
 
-        WorldBackupService::getInstance()->executeRestorePlan();
+        $service = WorldBackupService::getInstance();
+
+        try {
+            $service->executeRestorePlan();
+            $service->autoBackup();
+        } catch (Exception $e) {
+            Logging::logException($e);
+        }
     }
 
     public function onEnable()
     {
-        $this->getLogger()->debug('onLoad');
+        $this->getLogger()->debug(TextFormat::YELLOW . 'onEnable');
         parent::onEnable();
 
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
@@ -80,15 +91,15 @@ class Main extends PluginBaseEx implements Listener
         // task
 
         $this->task = new TimerTask();
-        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 24 = 12 hour
+        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
-            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1200, $interval);
+            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         } else {
             $this->getLogger()->debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1200, $interval);
+            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         }
 
         // register
@@ -100,6 +111,11 @@ class Main extends PluginBaseEx implements Listener
         $this->setupCommands([
             new WorldBackupCommand($this)
         ]);
+    }
+
+    public function onLevelLoad(LevelLoadEvent $event)
+    {
+        $this->getLogger()->debug(TextFormat::YELLOW . 'LevelLoadEvent: ' . $event->getLevel()->getName());
     }
 }
 

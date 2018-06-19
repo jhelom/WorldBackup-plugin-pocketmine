@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\Services;
 
 
+use DateTimeImmutable;
 use Exception;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\Logging;
@@ -31,6 +32,7 @@ class WorldBackupService
     private const DAYS = 'days';
     private const DAYS_MIN = 1;
     private const DAYS_MAX = 999;
+    private const DATE_FORMAT = 'Y-m-d';
 
     /** @var WorldBackupService|null */
     static private $instance = null;
@@ -81,17 +83,30 @@ class WorldBackupService
      */
     public function autoBackup(): bool
     {
-        $today = date('Y_m_d');
-        $last_backup = Value::getString(self::LAST_BACKUP, $this->settings, '');
+        $today = new DateTimeImmutable();
+        Logging::debug('today = {0}', $today->format(self::DATE_FORMAT));
 
-        if ($last_backup == $today) {
-            return false;
+        $s = Value::getString(self::LAST_BACKUP, $this->settings);
+        Logging::debug('last str = {0}', $s);
+
+        $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
+
+        if ($last !== false) {
+            Logging::debug('last  = {0}', $last->format(self::DATE_FORMAT));
+
+            $diff = $today->diff($last);
+
+            Logging::debug('diff days = {0}', $diff->days);
+
+            if ($diff->days < $this->getDays()) {
+                return false;
+            }
         }
 
         Logging::info(Messages::autoBackupStart());
 
         $this->backupAll();
-        $this->settings[self::LAST_BACKUP] = $today;
+        $this->settings[self::LAST_BACKUP] = $today->format(self::DATE_FORMAT);
         $this->saveSettings();
 
         Logging::info(Messages::autoBackupEnd());
@@ -157,7 +172,7 @@ class WorldBackupService
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
-        $history = date('Y-m-d');
+        $history = date(self::DATE_FORMAT);
         $backupDir = $this->getHistoryFolder($world, $history);
 
         if ($overwrite === false) {
@@ -283,7 +298,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
-                Logging::debug('copy: ' . $name);
+                Logging::debug('copy: {0} => {1}' . $srcFile, $dstFile);
                 copy($srcFile, $dstFile);
             }
         }
@@ -364,10 +379,12 @@ class WorldBackupService
             if (is_dir($target)) {
                 $this->deleteDirectories($target);
             } else if (is_file($target)) {
+                Logging::debug('delete file. "{0}"', $target);
                 unlink($target);
             }
         }
 
+        Logging::debug('delete directory. "{0}"', $dir);
         rmdir($dir);
     }
 

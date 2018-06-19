@@ -31,7 +31,7 @@ set-days: 'バックアップ周期 = {0} 日'
 set-days-invalid: '§cバックアップ周期の日数を指定してください。'
 set-days-completed: '§aバックアップ周期を {0} 日に設定しました。'
 
-restore-plan: '§aワールド "{0}" を履歴 "{1}" から復元するためにSTOPコマンドでサーバーを再起動してください。§6復元を中止するには /wbackup clear コマンドを使います。'
+restore-plan: '§aワールド "{0}" を履歴 "{1}" から復元するために§6STOPコマンドでサーバーを再起動§aしてください。復元を中止するには /wbackup clear コマンドを使います。'
 restore-start: '§aワールド "{0}" の履歴 "{1}" からの復元を開始しました。'
 restore-completed: '§aワールド "{0}" の履歴 "{1}" からの復元が完了しました。'
 restore-clear: '§a復元を中止しました。'

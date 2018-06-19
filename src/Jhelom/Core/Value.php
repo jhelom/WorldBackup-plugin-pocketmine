@@ -50,7 +50,7 @@ class Value
         $value = self::get($key, $array, $default);
 
         if (is_null($value)) {
-            return null;
+            return $default;
         } else if (is_float($value)) {
             return $value;
         } else {
@@ -69,7 +69,7 @@ class Value
         $value = self::get($key, $array, $default);
 
         if (is_null($value)) {
-            return null;
+            return $default;
         } else if (is_string($value)) {
             return $value;
         } else {
@@ -88,7 +88,7 @@ class Value
         $value = self::get($key, $array, $default);
 
         if (is_null($value)) {
-            return null;
+            return $default;
         } else if (is_bool($value)) {
             return $value;
         } else {
