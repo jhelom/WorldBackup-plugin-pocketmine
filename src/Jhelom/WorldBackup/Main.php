@@ -65,7 +65,7 @@ class Main extends PluginBaseEx implements Listener
         // task
 
         $this->task = new TimerTask($this);
-        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
+        $interval = 1200 * 60;  // 1 minutes * 60 * 12 = 1 hour
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {

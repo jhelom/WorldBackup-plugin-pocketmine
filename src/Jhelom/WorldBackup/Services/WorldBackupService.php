@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\Services;
 
 
+
 use DateTimeImmutable;
 use Exception;
 use Jhelom\Core\CustomLogger;
@@ -35,7 +36,9 @@ class WorldBackupService
 
     private $settings = [];
 
+    /** @var Main */
     private $main;
+    /** @var CustomLogger */
     private $logger;
 
     /**
@@ -71,24 +74,31 @@ class WorldBackupService
     }
 
     /**
+     * @return DateTimeImmutable
+     * @throws Exception
+     */
+    private function getToday(): DateTimeImmutable
+    {
+        return new DateTimeImmutable();
+    }
+
+    /**
      * @return bool
      * @throws ServiceException
      */
     public function autoBackup(): bool
     {
-        $today = new DateTimeImmutable();
+        $today = $this->getToday();
         $this->logger->debug('today = {0}', $today->format(self::DATE_FORMAT));
 
         $s = Value::getString(self::LAST_BACKUP, $this->settings, '2000-01-01');
-        $this->logger->debug('last str = {0}', $s);
+        $this->logger->debug('last backup string = {0}', $s);
 
         $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
 
         if ($last !== false) {
-            $this->logger->debug('last  = {0}', $last->format(self::DATE_FORMAT));
-
+            $this->logger->debug('last backup date   = {0}', $last->format(self::DATE_FORMAT));
             $diff = $today->diff($last);
-
             $this->logger->debug('diff days = {0}', $diff->days);
 
             if ($diff->days < $this->getDays()) {
@@ -165,7 +175,7 @@ class WorldBackupService
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
-        $history = date(self::DATE_FORMAT);
+        $history = $this->getToday()->format(self::DATE_FORMAT);
         $backupDir = $this->getHistoryFolder($world, $history);
 
         if ($overwrite === false) {
