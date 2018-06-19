@@ -5,9 +5,8 @@ namespace Jhelom\WorldBackup;
 
 
 use Exception;
-use Jhelom\Core\Logging;
+use Jhelom\Core\CommandInvoker;
 use Jhelom\Core\PluginBaseEx;
-use Jhelom\Core\PluginUpdater;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
@@ -22,67 +21,43 @@ class Main extends PluginBaseEx implements Listener
     private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
     private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
 
-    /** @var Main */
-    static private $instance;
+    private $backupService;
+    private $messages;
     private $task;
-
-    /**
-     * @return Main
-     */
-    static public function getInstance(): Main
-    {
-        return Main::$instance;
-    }
 
     public function onLoad()
     {
-        $this->getLogger()->debug('onLoad');
-
         parent::onLoad();
-        Main::$instance = $this;
 
-        // config
-
-        $supportedLanguages = ['jpn', 'eng'];
-
-        foreach ($supportedLanguages as $lang) {
-            $this->saveResource('messages.' . $lang . '.yml', true);
-
-        }
+        $this->backupService = new WorldBackupService($this);
 
         // messages
 
-        $message_file = $this->getDataFolder() . 'messages.' . $this->getServer()->getLanguage()->getLang() . '.yml';
+        $message_file = $this->getMessagesPath($this->getServer()->getLanguage()->getLang());
 
         if (!is_file($message_file)) {
-            $message_file = $this->getDataFolder() . 'messages.eng.yml';
+            $message_file = $this->getMessagesPath('eng');
         }
 
-        Messages::load($message_file);
+        $this->messages = new Messages($this->getLogger(), $message_file);
 
         // restore
 
-        $service = WorldBackupService::getInstance();
-
         try {
-            $service->executeRestorePlan();
-            $service->autoBackup();
+            $this->backupService->executeRestorePlan();
+            $this->backupService->autoBackup();
         } catch (Exception $e) {
-            Logging::logException($e);
+            $this->getLogger()->logException($e);
         }
     }
 
     public function onEnable()
     {
-        $this->getLogger()->debug('onEnable');
         parent::onEnable();
-
-        $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
-        $updater->update();
 
         // task
 
-        $this->task = new TimerTask();
+        $this->task = new TimerTask($this);
         $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
 
         // TODO: scheduler
@@ -97,17 +72,67 @@ class Main extends PluginBaseEx implements Listener
         // register
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-
-        // setup commands
-
-        $this->setupCommands([
-            new WorldBackupCommand($this)
-        ]);
     }
 
+    /**
+     * @return CommandInvoker[]
+     */
+    protected function setupCommands(): array
+    {
+        return [
+            new WorldBackupCommand($this)
+        ];
+    }
+
+    /**
+     * @param LevelLoadEvent $event
+     */
     public function onLevelLoad(LevelLoadEvent $event)
     {
         $this->getLogger()->debug('LevelLoadEvent: ' . $event->getLevel()->getName());
+    }
+
+    /**
+     * @return WorldBackupService
+     */
+    public function getBackupService(): WorldBackupService
+    {
+        return $this->backupService;
+    }
+
+    /**
+     * @return Messages
+     */
+    public function getMessages(): Messages
+    {
+        return $this->messages;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPluginUpdateUrlDomain(): string
+    {
+        return self::PLUGIN_DOWNLOAD_URL_DOMAIN;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPluginUpdateUrlPath(): string
+    {
+        return self::PLUGIN_DOWNLOAD_URL_PATH;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getSupportedLanguages(): array
+    {
+        return [
+            'eng',
+            'jpn'
+        ];
     }
 }
 

@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace Jhelom\Core;
 
+/**
+ * Class Value
+ * @package Jhelom\Core
+ */
 class Value
 {
     /**

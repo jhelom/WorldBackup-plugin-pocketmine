@@ -6,12 +6,11 @@ namespace Jhelom\WorldBackup\Services;
 
 use DateTimeImmutable;
 use Exception;
+use Jhelom\Core\CustomLogger;
 use Jhelom\Core\JsonFile;
-use Jhelom\Core\Logging;
 use Jhelom\Core\ServiceException;
 use Jhelom\Core\Value;
 use Jhelom\WorldBackup\Main;
-use Jhelom\WorldBackup\Messages;
 use pocketmine\Server;
 
 /**
@@ -34,13 +33,19 @@ class WorldBackupService
     private const DAYS_MAX = 999;
     private const DATE_FORMAT = 'Y-m-d';
 
-    /** @var WorldBackupService|null */
-    static private $instance = null;
-
     private $settings = [];
 
-    private function __construct()
+    private $main;
+    private $logger;
+
+    /**
+     * WorldBackupService constructor.
+     * @param Main $main
+     */
+    public function __construct(Main $main)
     {
+        $this->main = $main;
+        $this->logger = new CustomLogger($main->getLogger());
         $this->loadSettings();
     }
 
@@ -62,19 +67,7 @@ class WorldBackupService
      */
     private function getSettingsPath(): string
     {
-        return Main::getInstance()->getDataFolder() . 'worldbackup.json';
-    }
-
-    /**
-     * @return WorldBackupService
-     */
-    static public function getInstance(): WorldBackupService
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new WorldBackupService();
-        }
-
-        return self::$instance;
+        return $this->main->getDataFolder() . 'worldbackup.json';
     }
 
     /**
@@ -84,32 +77,32 @@ class WorldBackupService
     public function autoBackup(): bool
     {
         $today = new DateTimeImmutable();
-        Logging::debug('today = {0}', $today->format(self::DATE_FORMAT));
+        $this->logger->debug('today = {0}', $today->format(self::DATE_FORMAT));
 
-        $s = Value::getString(self::LAST_BACKUP, $this->settings);
-        Logging::debug('last str = {0}', $s);
+        $s = Value::getString(self::LAST_BACKUP, $this->settings, '2000-01-01');
+        $this->logger->debug('last str = {0}', $s);
 
         $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
 
         if ($last !== false) {
-            Logging::debug('last  = {0}', $last->format(self::DATE_FORMAT));
+            $this->logger->debug('last  = {0}', $last->format(self::DATE_FORMAT));
 
             $diff = $today->diff($last);
 
-            Logging::debug('diff days = {0}', $diff->days);
+            $this->logger->debug('diff days = {0}', $diff->days);
 
             if ($diff->days < $this->getDays()) {
                 return false;
             }
         }
 
-        Logging::info(Messages::autoBackupStart());
+        $this->logger->info($this->main->getMessages()->autoBackupStart());
 
         $this->backupAll();
         $this->settings[self::LAST_BACKUP] = $today->format(self::DATE_FORMAT);
         $this->saveSettings();
 
-        Logging::info(Messages::autoBackupEnd());
+        $this->logger->info($this->main->getMessages()->autoBackupEnd());
         return true;
     }
 
@@ -195,7 +188,7 @@ class WorldBackupService
             return;
         }
 
-        throw new ServiceException(Messages::worldNotFound($world));
+        throw new ServiceException($this->main->getMessages()->worldNotFound($world));
     }
 
     /**
@@ -217,20 +210,20 @@ class WorldBackupService
     public function invalidWorldIfThrow(?string $world): void
     {
         if (is_null($world)) {
-            throw new ServiceException(Messages::worldRequired());
+            throw new ServiceException($this->main->getMessages()->worldRequired());
         }
 
         $world = trim($world);
 
         if ($world === '') {
-            throw new ServiceException(Messages::worldRequired());
+            throw new ServiceException($this->main->getMessages()->worldRequired());
         }
 
         if (preg_match('/^[a-zA-Z0-9_\-]+$/', $world)) {
             return;
         }
 
-        throw new ServiceException(Messages::worldInvalid());
+        throw new ServiceException($this->main->getMessages()->worldInvalid());
     }
 
     /**
@@ -266,7 +259,7 @@ class WorldBackupService
      */
     private function getBackupFolder(): string
     {
-        $dir = Main::getInstance()->getDataFolder() . self::BACKUP_FOLDER;
+        $dir = $this->main->getDataFolder() . self::BACKUP_FOLDER;
 
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
@@ -287,7 +280,7 @@ class WorldBackupService
         }
 
         if (!is_dir($dstDir)) {
-            Logging::debug('make directory. "{0}"', $dstDir);
+            $this->logger->debug('make directory. "{0}"', $dstDir);
             mkdir($dstDir, 0755, true);
         }
 
@@ -299,7 +292,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
-                Logging::debug('copy file. {0} => {1}', $srcFile, $dstFile);
+                $this->logger->debug('copy file. {0} => {1}', $srcFile, $dstFile);
             }
         }
     }
@@ -333,7 +326,7 @@ class WorldBackupService
             return;
         }
 
-        throw new ServiceException(Messages::worldNotFound($world));
+        throw new ServiceException($this->main->getMessages()->worldNotFound($world));
     }
 
     /**
@@ -379,12 +372,12 @@ class WorldBackupService
             if (is_dir($target)) {
                 $this->deleteDirectories($target);
             } else if (is_file($target)) {
-                Logging::debug('delete file. "{0}"', $target);
+                $this->logger->debug('delete file. "{0}"', $target);
                 unlink($target);
             }
         }
 
-        Logging::debug('delete directory. "{0}"', $dir);
+        $this->logger->debug('delete directory. "{0}"', $dir);
         rmdir($dir);
     }
 
@@ -442,7 +435,7 @@ class WorldBackupService
             return;
         }
 
-        throw new ServiceException(Messages::historyNotFound($world, $history));
+        throw new ServiceException($this->main->getMessages()->historyNotFound($world, $history));
     }
 
     /**
@@ -452,18 +445,18 @@ class WorldBackupService
     public function invalidHistoryIfThrow(?string $history): void
     {
         if (is_null($history)) {
-            throw new ServiceException(Messages::historyRequired());
+            throw new ServiceException($this->main->getMessages()->historyRequired());
         }
 
         if ($history === '') {
-            throw new ServiceException(Messages::historyRequired());
+            throw new ServiceException($this->main->getMessages()->historyRequired());
         }
 
         if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $history)) {
             return;
         }
 
-        throw new ServiceException(Messages::historyInvalid());
+        throw new ServiceException($this->main->getMessages()->historyInvalid());
     }
 
     public function executeRestorePlan(): void
@@ -480,12 +473,12 @@ class WorldBackupService
                 return;
             }
 
-            Logging::info(Messages::restoreStart($world, $history));
+            $this->logger->info($this->main->getMessages()->restoreStart($world, $history));
             $this->backup($world, false);
             $this->restore($world, $history);
-            Logging::info(Messages::restoreCompleted($world, $history));
+            $this->logger->info($this->main->getMessages()->restoreCompleted($world, $history));
         } catch (Exception $e) {
-            Logging::error($e->getMessage());
+            $this->logger->logException($e);
         } finally {
             $this->settings[self::RESTORE_WORLD] = '';
             $this->settings[self::RESTORE_HISTORY] = '';
