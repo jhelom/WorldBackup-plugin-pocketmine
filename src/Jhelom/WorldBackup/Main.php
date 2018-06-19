@@ -12,7 +12,6 @@ use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
-use pocketmine\utils\Config;
 
 /**
  * Class Main
@@ -25,8 +24,6 @@ class Main extends PluginBaseEx implements Listener
 
     /** @var Main */
     static private $instance;
-    /** @var Config */
-    private $config;
     private $task;
 
     /**
@@ -52,10 +49,6 @@ class Main extends PluginBaseEx implements Listener
             $this->saveResource('messages.' . $lang . '.yml', true);
 
         }
-
-        $this->saveDefaultConfig();
-        $this->reloadConfig();
-        $this->config = new Config($this->getDataFolder() . 'config.yml', Config::YAML, []);
 
         // messages
 
