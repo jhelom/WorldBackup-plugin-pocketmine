@@ -6,6 +6,7 @@ namespace Jhelom\WorldBackup;
 
 use Exception;
 use Jhelom\Core\CommandInvoker;
+use Jhelom\Core\ISupportedLanguage;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
@@ -36,7 +37,7 @@ class Main extends PluginBaseEx implements Listener
         $message_file = $this->getMessagesPath($this->getServer()->getLanguage()->getLang());
 
         if (!is_file($message_file)) {
-            $message_file = $this->getMessagesPath('eng');
+            $message_file = $this->getMessagesPath(ISupportedLanguage::ENGLISH);
         }
 
         $this->messages = new Messages($this->getLogger(), $message_file);
@@ -130,8 +131,8 @@ class Main extends PluginBaseEx implements Listener
     protected function getSupportedLanguages(): array
     {
         return [
-            'eng',
-            'jpn'
+            ISupportedLanguage::ENGLISH,
+            ISupportedLanguage::JAPANESE
         ];
     }
 }
