@@ -181,24 +181,25 @@ class WorldBackupCommand extends CommandInvoker
                 $value = $args->getInt();
 
                 if (!is_numeric($value)) {
-                    throw new CommandInvokeException(Messages::setMaxInvalid());
+                    throw new CommandInvokeException(Messages::setLimitInvalid());
                 }
 
                 $service->setHistoryLimit($value);
                 $service->saveSettings();
-                $sender->sendMessage(Messages::setMaxCompleted($service->getHistoryLimit()));
+                $sender->sendMessage(Messages::setLimitCompleted($service->getHistoryLimit()));
                 break;
 
-            case 'cycle':
+            case 'days':
                 $days = $args->getInt(1);
-                $service->setCycle($days);
+                $service->setDays($days);
                 $service->saveSettings();
-                $sender->sendMessage(Messages::setCycleCompleted($service->getCycle()));
+                $sender->sendMessage(Messages::setCycleCompleted($service->getDays()));
+                break;
 
             default:
                 $sender->sendMessage(Messages::showSettings());
                 $sender->sendMessage(Messages::setMax($service->getHistoryLimit()));
-                $sender->sendMessage(Messages::setCycle($service->getCycle()));
+                $sender->sendMessage(Messages::setDays($service->getDays()));
                 break;
         }
     }

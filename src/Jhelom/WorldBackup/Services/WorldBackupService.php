@@ -8,6 +8,7 @@ use Exception;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\Logging;
 use Jhelom\Core\ServiceException;
+use Jhelom\Core\Value;
 use Jhelom\WorldBackup\Main;
 use Jhelom\WorldBackup\Messages;
 use pocketmine\Server;
@@ -27,7 +28,7 @@ class WorldBackupService
     private const LAST_BACKUP = 'last_backup';
     private const RESTORE_WORLD = 'restore_world';
     private const RESTORE_HISTORY = 'restore_history';
-    private const CYCLE = 'cycle';
+    private const DAYS = 'days';
 
     /** @var WorldBackupService|null */
     static private $instance = null;
@@ -47,7 +48,8 @@ class WorldBackupService
             self::HISTORY_LIMIT => self::HISTORY_LIMIT_DEFAULT,
             self::LAST_BACKUP => '',
             self::RESTORE_WORLD => '',
-            self::RESTORE_HISTORY => ''
+            self::RESTORE_HISTORY => '',
+            self::DAYS => 1,
         ]);
     }
 
@@ -135,15 +137,6 @@ class WorldBackupService
     }
 
     /**
-     * @param string $world
-     * @return string
-     */
-    private function getWorldSourceFolder(string $world): string
-    {
-        return $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
-    }
-
-    /**
      * @return string
      */
     private function getSourceFolder(): string
@@ -189,25 +182,6 @@ class WorldBackupService
 
     /**
      * @param null|string $world
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function notExistsHistoryIfThrow(?string $world, ?string $history): void
-    {
-        $this->notExistsWorldBackupIfThrow($world);
-        $this->invalidHistoryIfThrow($history);
-
-        $dir = $this->getHistoryFolder($world, $history);
-
-        if (is_dir($dir)) {
-            return;
-        }
-
-        throw new ServiceException(Messages::historyNotFound($world, $history));
-    }
-
-    /**
-     * @param null|string $world
      * @return bool
      * @throws ServiceException
      */
@@ -216,27 +190,6 @@ class WorldBackupService
         $this->invalidWorldIfThrow($world);
         $dir = $this->getWorldSourceFolder($world);
         return is_dir($dir);
-    }
-
-    /**
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function invalidHistoryIfThrow(?string $history): void
-    {
-        if (is_null($history)) {
-            throw new ServiceException(Messages::historyRequired());
-        }
-
-        if ($history === '') {
-            throw new ServiceException(Messages::historyRequired());
-        }
-
-        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $history)) {
-            return;
-        }
-
-        throw new ServiceException(Messages::historyInvalid());
     }
 
     /**
@@ -260,6 +213,15 @@ class WorldBackupService
         }
 
         throw new ServiceException(Messages::worldInvalid());
+    }
+
+    /**
+     * @param string $world
+     * @return string
+     */
+    private function getWorldSourceFolder(string $world): string
+    {
+        return $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
     }
 
     /**
@@ -380,7 +342,7 @@ class WorldBackupService
      */
     public function getHistoryLimit(): int
     {
-        return $this->settings[self::HISTORY_LIMIT];
+        return Value::getInt(self::HISTORY_LIMIT, $this->settings, self::HISTORY_LIMIT_DEFAULT);
     }
 
     /**
@@ -443,6 +405,46 @@ class WorldBackupService
         $this->saveSettings();
     }
 
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function notExistsHistoryIfThrow(?string $world, ?string $history): void
+    {
+        $this->notExistsWorldBackupIfThrow($world);
+        $this->invalidHistoryIfThrow($history);
+
+        $dir = $this->getHistoryFolder($world, $history);
+
+        if (is_dir($dir)) {
+            return;
+        }
+
+        throw new ServiceException(Messages::historyNotFound($world, $history));
+    }
+
+    /**
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function invalidHistoryIfThrow(?string $history): void
+    {
+        if (is_null($history)) {
+            throw new ServiceException(Messages::historyRequired());
+        }
+
+        if ($history === '') {
+            throw new ServiceException(Messages::historyRequired());
+        }
+
+        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $history)) {
+            return;
+        }
+
+        throw new ServiceException(Messages::historyInvalid());
+    }
+
     public function executeRestorePlan(): void
     {
         try {
@@ -471,23 +473,6 @@ class WorldBackupService
     }
 
     /**
-     * @param null|string $world
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function restore(?string $world, ?string $history): void
-    {
-        $this->notExistsHistoryIfThrow($world, $history);
-
-        $sourceDir = $this->getWorldSourceFolder($world);
-        $backupDir = $this->getHistoryFolder($world, $history);
-
-        $this->deleteDirectories($sourceDir);
-        $this->copyDirectories($backupDir, $sourceDir);
-        $this->purgeHistories($world);
-    }
-
-    /**
      * @return null|string
      */
     public function getRestorePlanWorld(): ?string
@@ -511,6 +496,23 @@ class WorldBackupService
         }
     }
 
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function restore(?string $world, ?string $history): void
+    {
+        $this->notExistsHistoryIfThrow($world, $history);
+
+        $sourceDir = $this->getWorldSourceFolder($world);
+        $backupDir = $this->getHistoryFolder($world, $history);
+
+        $this->deleteDirectories($sourceDir);
+        $this->copyDirectories($backupDir, $sourceDir);
+        $this->purgeHistories($world);
+    }
+
     public function clearRestore(): void
     {
         $this->settings[self::RESTORE_WORLD] = '';
@@ -518,27 +520,19 @@ class WorldBackupService
         $this->saveSettings();
     }
 
-    public function getCycle(): int
+    /**
+     * @return int
+     */
+    public function getDays(): int
     {
-        return $this->getSettingValue(self::CYCLE, 1);
+        return Value::getInt(self::DAYS, $this->settings, 1);
     }
 
-    public function setCycle(int $days): void
+    /**
+     * @param int $days
+     */
+    public function setDays(int $days): void
     {
-        $this->settings[self::CYCLE] = $days;
-    }
-
-    public function getSettingValue(string $key, $default = null)
-    {
-        if (array_key_exists($key, $this->settings)) {
-            return $this->settings[$key];
-        } else {
-            return $default;
-        }
-    }
-
-    private function getSettingInt(string $key, int $default = 0): int
-    {
-        return $this->getSettingInt()
+        $this->settings[self::DAYS] = $days;
     }
 }
