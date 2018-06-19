@@ -287,6 +287,7 @@ class WorldBackupService
         }
 
         if (!is_dir($dstDir)) {
+            Logging::debug('make directory. "{0}"', $dstDir);
             mkdir($dstDir, 0755, true);
         }
 
@@ -298,8 +299,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
-                Logging::debug('copy: {0} => {1}' . $srcFile, $dstFile);
-                copy($srcFile, $dstFile);
+                Logging::debug('copy file. {0} => {1}', $srcFile, $dstFile);
             }
         }
     }
