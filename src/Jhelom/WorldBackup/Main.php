@@ -12,6 +12,7 @@ use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
+use pocketmine\scheduler\Task;
 
 /**
  * Class Main
@@ -22,8 +23,13 @@ class Main extends PluginBaseEx implements Listener
     private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
     private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
 
+    /** @var WorldBackupService */
     private $backupService;
+
+    /** @var Messages */
     private $messages;
+
+    /** @var Task */
     private $task;
 
     public function onLoad()
@@ -45,8 +51,8 @@ class Main extends PluginBaseEx implements Listener
         // restore
 
         try {
-            $this->backupService->executeRestorePlan();
             $this->backupService->autoBackup();
+            $this->backupService->executeRestorePlan();
         } catch (Exception $e) {
             $this->getLogger()->logException($e);
         }
@@ -76,16 +82,6 @@ class Main extends PluginBaseEx implements Listener
     }
 
     /**
-     * @return CommandInvoker[]
-     */
-    protected function setupCommands(): array
-    {
-        return [
-            new WorldBackupCommand($this)
-        ];
-    }
-
-    /**
      * @param LevelLoadEvent $event
      */
     public function onLevelLoad(LevelLoadEvent $event)
@@ -107,6 +103,16 @@ class Main extends PluginBaseEx implements Listener
     public function getMessages(): Messages
     {
         return $this->messages;
+    }
+
+    /**
+     * @return CommandInvoker[]
+     */
+    protected function setupCommands(): array
+    {
+        return [
+            new WorldBackupCommand($this)
+        ];
     }
 
     /**

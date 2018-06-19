@@ -292,6 +292,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
+                copy($srcFile, $dstFile);
                 $this->logger->debug('copy file. {0} => {1}', $srcFile, $dstFile);
             }
         }
