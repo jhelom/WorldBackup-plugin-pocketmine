@@ -7,15 +7,16 @@ namespace Jhelom\Core\Forms;
 use pocketmine\Player;
 
 /**
- * Class ModalFormAction
+ * Interface IModalFormCloseAction
  * @package Jhelom\Core\Forms
  */
-abstract class ModalFormAction
+interface IModalFormCloseAction
 {
     /**
      * @param Player $player
      * @param ModalForm $form
+     * @param bool $isAccepted
      */
-    abstract public function onAction(Player $player, ModalForm $form): void;
+    public function onModalFormClose(Player $player, ModalForm $form, bool $isAccepted): void;
 }
 

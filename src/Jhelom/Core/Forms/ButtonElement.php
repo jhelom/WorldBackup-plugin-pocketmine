@@ -12,7 +12,7 @@ use pocketmine\Player;
  */
 class ButtonElement
 {
-    /** @var ButtonClickAction */
+    /** @var IButtonClickAction */
     private $clickAction;
 
     /** @var string */
@@ -40,16 +40,16 @@ class ButtonElement
     {
         $action = $this->clickAction;
 
-        if ($action instanceof ButtonClickAction) {
-            $action->onAction($player, $form, $this);
+        if ($action instanceof IButtonClickAction) {
+            $action->onButtonClick($player, $form, $this);
         }
     }
 
     /**
-     * @param ButtonClickAction $action
+     * @param IButtonClickAction $action
      * @return ButtonElement
      */
-    public function onClick(ButtonClickAction $action): ButtonElement
+    public function onClick(IButtonClickAction $action): ButtonElement
     {
         $this->clickAction = $action;
         return $this;

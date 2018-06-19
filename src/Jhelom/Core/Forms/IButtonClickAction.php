@@ -6,16 +6,17 @@ namespace Jhelom\Core\Forms;
 
 use pocketmine\Player;
 
+
 /**
- * Class ButtonClickAction
+ * Interface IButtonClickAction
  * @package Jhelom\Core\Forms
  */
-abstract class ButtonClickAction
+interface IButtonClickAction
 {
     /**
      * @param Player $player
      * @param SimpleForm $form
      * @param ButtonElement $button
      */
-    abstract public function onAction(Player $player, SimpleForm $form, ButtonElement $button): void;
+    public function onButtonClick(Player $player, SimpleForm $form, ButtonElement $button): void;
 }

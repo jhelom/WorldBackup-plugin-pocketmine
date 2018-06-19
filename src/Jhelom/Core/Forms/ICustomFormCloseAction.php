@@ -6,15 +6,16 @@ namespace Jhelom\Core\Forms;
 
 use pocketmine\Player;
 
+
 /**
- * Class CustomFormCloseAction
+ * Interface ICustomFormCloseAction
  * @package Jhelom\Core\Forms
  */
-abstract class CustomFormCloseAction
+interface ICustomFormCloseAction
 {
     /**
      * @param Player $player
      * @param CustomForm $form
      */
-    abstract public function onAction(Player $player, CustomForm $form): void;
+    public function onCustomFormClose(Player $player, CustomForm $form): void;
 }

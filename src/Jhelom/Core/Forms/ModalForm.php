@@ -11,10 +11,10 @@ use pocketmine\Player;
  */
 class ModalForm extends Form
 {
-    /** @var ModalFormAction */
+    /** @var IModalFormCloseAction */
     private $acceptAction;
 
-    /** @var ModalFormAction */
+    /** @var IModalFormCloseAction */
     private $dismissAction;
 
     /**
@@ -33,17 +33,17 @@ class ModalForm extends Form
     }
 
     /**
-     * @param ModalFormAction $action
+     * @param IModalFormCloseAction $action
      */
-    public function onAccept(ModalFormAction $action): void
+    public function onAccept(IModalFormCloseAction $action): void
     {
         $this->acceptAction = $action;
     }
 
     /**
-     * @param ModalFormAction $action
+     * @param IModalFormCloseAction $action
      */
-    public function onDismiss(ModalFormAction $action): void
+    public function onDismiss(IModalFormCloseAction $action): void
     {
         $this->dismissAction = $action;
     }
@@ -68,8 +68,8 @@ class ModalForm extends Form
     {
         $action = $this->acceptAction;
 
-        if ($action instanceof ModalFormAction) {
-            $action->onAction($player, $this);
+        if ($action instanceof IModalFormCloseAction) {
+            $action->onModalFormClose($player, $this, true);
         }
     }
 
@@ -80,8 +80,8 @@ class ModalForm extends Form
     {
         $action = $this->dismissAction;
 
-        if ($action instanceof ModalFormAction) {
-            $action->onAction($player, $this);
+        if ($action instanceof IModalFormCloseAction) {
+            $action->onModalFormClose($player, $this, false);
         }
     }
 }

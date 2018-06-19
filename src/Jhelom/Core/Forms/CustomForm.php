@@ -14,10 +14,10 @@ class CustomForm extends Form
 {
     private const CONTENT = 'content';
 
-    /** @var CustomFormSubmitAction */
+    /** @var ICustomFormSubmitAction */
     private $submitAction;
 
-    /** @var CustomFormCloseAction */
+    /** @var ICustomFormCloseAction */
     private $closeAction;
 
     private $tagMap = [];
@@ -136,17 +136,17 @@ class CustomForm extends Form
     }
 
     /**
-     * @param CustomFormCloseAction $action
+     * @param ICustomFormCloseAction $action
      */
-    public function onClose(CustomFormCloseAction $action): void
+    public function onClose(ICustomFormCloseAction $action): void
     {
         $this->closeAction = $action;
     }
 
     /**
-     * @param CustomFormSubmitAction $action
+     * @param ICustomFormSubmitAction $action
      */
-    public function onSubmit(CustomFormSubmitAction $action): void
+    public function onSubmit(ICustomFormSubmitAction $action): void
     {
         $this->submitAction = $action;
     }
@@ -183,8 +183,8 @@ class CustomForm extends Form
     {
         $action = $this->closeAction;
 
-        if ($action instanceof CustomFormCloseAction) {
-            $action->onAction($player, $this);
+        if ($action instanceof ICustomFormCloseAction) {
+            $action->onCustomFormClose($player, $this);
         }
     }
 
@@ -196,8 +196,8 @@ class CustomForm extends Form
     {
         $action = $this->submitAction;
 
-        if ($action instanceof CustomFormSubmitAction) {
-            $action->onAction($player, $this, new CustomFormValues($values));
+        if ($action instanceof ICustomFormSubmitAction) {
+            $action->onCustomFormSubmit($player, $this, new CustomFormValues($values));
         }
     }
 }

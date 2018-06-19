@@ -6,16 +6,17 @@ namespace Jhelom\Core\Forms;
 
 use pocketmine\Player;
 
+
 /**
- * Class CustomFormSubmitAction
+ * Interface ICustomFormSubmitAction
  * @package Jhelom\Core\Forms
  */
-abstract class CustomFormSubmitAction
+interface ICustomFormSubmitAction
 {
     /**
      * @param Player $player
      * @param CustomForm $form
      * @param CustomFormValues $values
      */
-    abstract public function onAction(Player $player, CustomForm $form, CustomFormValues $values): void;
+    public function onCustomFormSubmit(Player $player, CustomForm $form, CustomFormValues $values): void;
 }
