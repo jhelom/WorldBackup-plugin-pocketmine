@@ -24,13 +24,8 @@ abstract class PluginBaseEx extends PluginBase
         }
     }
 
-    public function onDisable()
-    {
-        parent::onDisable();
-    }
-
     /**
-     * @param array $commands
+     * @param CommandInvoker[] $commands
      */
     protected function setupCommands(array $commands): void
     {

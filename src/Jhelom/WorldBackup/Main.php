@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup;
 
-use Jhelom\Core\Forms\Form;
+
+use Exception;
 use Jhelom\Core\Logging;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\Core\PluginUpdater;
@@ -11,7 +12,6 @@ use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\utils\Config;
 
 /**
@@ -39,15 +39,20 @@ class Main extends PluginBaseEx implements Listener
 
     public function onLoad()
     {
-        parent::onLoad();
-        $this->getLogger()->debug('§aonLoad');
+        $this->getLogger()->debug('onLoad');
 
+        parent::onLoad();
         Main::$instance = $this;
 
         // config
 
-        $this->saveResource('messages.jpn.yml', true);
-        $this->saveResource('messages.eng.yml', true);
+        $supportedLanguages = ['jpn', 'eng'];
+
+        foreach ($supportedLanguages as $lang) {
+            $this->saveResource('messages.' . $lang . '.yml', true);
+
+        }
+
         $this->saveDefaultConfig();
         $this->reloadConfig();
         $this->config = new Config($this->getDataFolder() . 'config.yml', Config::YAML, []);
@@ -64,29 +69,36 @@ class Main extends PluginBaseEx implements Listener
 
         // restore
 
-        WorldBackupService::getInstance()->executeRestorePlan();
+        $service = WorldBackupService::getInstance();
+
+        try {
+            $service->executeRestorePlan();
+            $service->autoBackup();
+        } catch (Exception $e) {
+            Logging::logException($e);
+        }
     }
 
     public function onEnable()
     {
+        $this->getLogger()->debug('onEnable');
         parent::onEnable();
 
-        Logging::debug('onLoad');
         $updater = new PluginUpdater($this, self::PLUGIN_DOWNLOAD_URL_DOMAIN, self::PLUGIN_DOWNLOAD_URL_PATH);
         $updater->update();
 
         // task
 
         $this->task = new TimerTask();
-        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 24 = 12 hour
+        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
-            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         } else {
             $this->getLogger()->debug('Scheduler = Server');
             /** @noinspection PhpUndefinedMethodInspection */
-            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, 1000, $interval);
+            $this->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this->task, $interval, $interval);
         }
 
         // register
@@ -100,20 +112,9 @@ class Main extends PluginBaseEx implements Listener
         ]);
     }
 
-    /**
-     * @param PlayerQuitEvent $event
-     */
-    public function onPlayerQuit(PlayerQuitEvent $event)
-    {
-        Form::purge($event->getPlayer()->getLowerCaseName());
-    }
-
-    /**
-     * @param LevelLoadEvent $event
-     */
     public function onLevelLoad(LevelLoadEvent $event)
     {
-        Logging::debug('§aLevelLoadEvent:' . $event->getLevel()->getName());
+        $this->getLogger()->debug('LevelLoadEvent: ' . $event->getLevel()->getName());
     }
 }
 

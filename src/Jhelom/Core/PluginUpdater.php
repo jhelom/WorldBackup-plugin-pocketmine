@@ -171,12 +171,7 @@ class PluginUpdater
 
         $msg = $this->messages[$lang][$key];
 
-        foreach ($args as $index => $value) {
-            $search = '{' . $index . '}';
-            $msg = str_replace($search, $value, $msg);
-        }
-
-        return $msg;
+        return StringFormat::formatEx($msg, $args);
     }
 
     /**

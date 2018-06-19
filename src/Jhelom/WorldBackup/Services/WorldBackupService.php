@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup\Services;
 
 
+use DateTimeImmutable;
 use Exception;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\Logging;
 use Jhelom\Core\ServiceException;
+use Jhelom\Core\Value;
 use Jhelom\WorldBackup\Main;
 use Jhelom\WorldBackup\Messages;
 use pocketmine\Server;
@@ -24,9 +26,13 @@ class WorldBackupService
     private const HISTORY_LIMIT_DEFAULT = 10;
     private const BACKUP_FOLDER = 'backups';
     private const WORLD_FOLDER = 'worlds';
-    private const LAST_AUTO_BACKUP = 'last_auto_backup';
+    private const LAST_BACKUP = 'last_backup';
     private const RESTORE_WORLD = 'restore_world';
     private const RESTORE_HISTORY = 'restore_history';
+    private const DAYS = 'days';
+    private const DAYS_MIN = 1;
+    private const DAYS_MAX = 999;
+    private const DATE_FORMAT = 'Y-m-d';
 
     /** @var WorldBackupService|null */
     static private $instance = null;
@@ -44,9 +50,10 @@ class WorldBackupService
 
         $this->settings = JsonFile::load($path, [
             self::HISTORY_LIMIT => self::HISTORY_LIMIT_DEFAULT,
-            self::LAST_AUTO_BACKUP => '',
+            self::LAST_BACKUP => '',
             self::RESTORE_WORLD => '',
-            self::RESTORE_HISTORY => ''
+            self::RESTORE_HISTORY => '',
+            self::DAYS => 1,
         ]);
     }
 
@@ -76,16 +83,30 @@ class WorldBackupService
      */
     public function autoBackup(): bool
     {
-        $today = date('Y_m_d');
+        $today = new DateTimeImmutable();
+        Logging::debug('today = {0}', $today->format(self::DATE_FORMAT));
 
-        if ($this->settings[self::LAST_AUTO_BACKUP] == $today) {
-            return false;
+        $s = Value::getString(self::LAST_BACKUP, $this->settings);
+        Logging::debug('last str = {0}', $s);
+
+        $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
+
+        if ($last !== false) {
+            Logging::debug('last  = {0}', $last->format(self::DATE_FORMAT));
+
+            $diff = $today->diff($last);
+
+            Logging::debug('diff days = {0}', $diff->days);
+
+            if ($diff->days < $this->getDays()) {
+                return false;
+            }
         }
 
         Logging::info(Messages::autoBackupStart());
 
         $this->backupAll();
-        $this->settings[self::LAST_AUTO_BACKUP] = $today;
+        $this->settings[self::LAST_BACKUP] = $today->format(self::DATE_FORMAT);
         $this->saveSettings();
 
         Logging::info(Messages::autoBackupEnd());
@@ -134,15 +155,6 @@ class WorldBackupService
     }
 
     /**
-     * @param string $world
-     * @return string
-     */
-    private function getWorldSourceFolder(string $world): string
-    {
-        return $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
-    }
-
-    /**
      * @return string
      */
     private function getSourceFolder(): string
@@ -155,12 +167,12 @@ class WorldBackupService
      * @param bool $overwrite
      * @throws ServiceException
      */
-    public function backup(string $world, bool $overwrite = true): void
+    public function backup(?string $world, bool $overwrite = true): void
     {
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
-        $history = date('Y-m-d');
+        $history = date(self::DATE_FORMAT);
         $backupDir = $this->getHistoryFolder($world, $history);
 
         if ($overwrite === false) {
@@ -188,25 +200,6 @@ class WorldBackupService
 
     /**
      * @param null|string $world
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function notExistsHistoryIfThrow(?string $world, ?string $history): void
-    {
-        $this->notExistsWorldBackupIfThrow($world);
-        $this->invalidHistoryIfThrow($history);
-
-        $dir = $this->getHistoryFolder($world, $history);
-
-        if (is_dir($dir)) {
-            return;
-        }
-
-        throw new ServiceException(Messages::historyNotFound($world, $history));
-    }
-
-    /**
-     * @param null|string $world
      * @return bool
      * @throws ServiceException
      */
@@ -215,27 +208,6 @@ class WorldBackupService
         $this->invalidWorldIfThrow($world);
         $dir = $this->getWorldSourceFolder($world);
         return is_dir($dir);
-    }
-
-    /**
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function invalidHistoryIfThrow(?string $history): void
-    {
-        if (is_null($history)) {
-            throw new ServiceException(Messages::historyRequired());
-        }
-
-        if ($history === '') {
-            throw new ServiceException(Messages::historyRequired());
-        }
-
-        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $history)) {
-            return;
-        }
-
-        throw new ServiceException(Messages::historyInvalid());
     }
 
     /**
@@ -259,6 +231,15 @@ class WorldBackupService
         }
 
         throw new ServiceException(Messages::worldInvalid());
+    }
+
+    /**
+     * @param string $world
+     * @return string
+     */
+    private function getWorldSourceFolder(string $world): string
+    {
+        return $this->getSourceFolder() . DIRECTORY_SEPARATOR . $world;
     }
 
     /**
@@ -306,6 +287,7 @@ class WorldBackupService
         }
 
         if (!is_dir($dstDir)) {
+            Logging::debug('make directory. "{0}"', $dstDir);
             mkdir($dstDir, 0755, true);
         }
 
@@ -317,8 +299,7 @@ class WorldBackupService
             } else if (is_file($target)) {
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
-                Logging::debug('copy: ' . $name);
-                copy($srcFile, $dstFile);
+                Logging::debug('copy file. {0} => {1}', $srcFile, $dstFile);
             }
         }
     }
@@ -379,7 +360,7 @@ class WorldBackupService
      */
     public function getHistoryLimit(): int
     {
-        return $this->settings[self::HISTORY_LIMIT];
+        return Value::getInt(self::HISTORY_LIMIT, $this->settings, self::HISTORY_LIMIT_DEFAULT);
     }
 
     /**
@@ -398,10 +379,12 @@ class WorldBackupService
             if (is_dir($target)) {
                 $this->deleteDirectories($target);
             } else if (is_file($target)) {
+                Logging::debug('delete file. "{0}"', $target);
                 unlink($target);
             }
         }
 
+        Logging::debug('delete directory. "{0}"', $dir);
         rmdir($dir);
     }
 
@@ -426,6 +409,7 @@ class WorldBackupService
     public function setHistoryLimit(int $max): void
     {
         $this->settings[self::HISTORY_LIMIT] = max(self::HISTORY_LIMIT_MIN, min(self::HISTORY_LIMIT_MAX, $max));
+        $this->saveSettings();
     }
 
     /**
@@ -440,6 +424,46 @@ class WorldBackupService
         $this->settings[self::RESTORE_WORLD] = $world;
         $this->settings[self::RESTORE_HISTORY] = $history;
         $this->saveSettings();
+    }
+
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function notExistsHistoryIfThrow(?string $world, ?string $history): void
+    {
+        $this->notExistsWorldBackupIfThrow($world);
+        $this->invalidHistoryIfThrow($history);
+
+        $dir = $this->getHistoryFolder($world, $history);
+
+        if (is_dir($dir)) {
+            return;
+        }
+
+        throw new ServiceException(Messages::historyNotFound($world, $history));
+    }
+
+    /**
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function invalidHistoryIfThrow(?string $history): void
+    {
+        if (is_null($history)) {
+            throw new ServiceException(Messages::historyRequired());
+        }
+
+        if ($history === '') {
+            throw new ServiceException(Messages::historyRequired());
+        }
+
+        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $history)) {
+            return;
+        }
+
+        throw new ServiceException(Messages::historyInvalid());
     }
 
     public function executeRestorePlan(): void
@@ -470,23 +494,6 @@ class WorldBackupService
     }
 
     /**
-     * @param null|string $world
-     * @param null|string $history
-     * @throws ServiceException
-     */
-    public function restore(?string $world, ?string $history): void
-    {
-        $this->notExistsHistoryIfThrow($world, $history);
-
-        $sourceDir = $this->getWorldSourceFolder($world);
-        $backupDir = $this->getHistoryFolder($world, $history);
-
-        $this->deleteDirectories($sourceDir);
-        $this->copyDirectories($backupDir, $sourceDir);
-        $this->purgeHistories($world);
-    }
-
-    /**
      * @return null|string
      */
     public function getRestorePlanWorld(): ?string
@@ -510,6 +517,23 @@ class WorldBackupService
         }
     }
 
+    /**
+     * @param null|string $world
+     * @param null|string $history
+     * @throws ServiceException
+     */
+    public function restore(?string $world, ?string $history): void
+    {
+        $this->notExistsHistoryIfThrow($world, $history);
+
+        $sourceDir = $this->getWorldSourceFolder($world);
+        $backupDir = $this->getHistoryFolder($world, $history);
+
+        $this->deleteDirectories($sourceDir);
+        $this->copyDirectories($backupDir, $sourceDir);
+        $this->purgeHistories($world);
+    }
+
     public function clearRestore(): void
     {
         $this->settings[self::RESTORE_WORLD] = '';
@@ -517,4 +541,20 @@ class WorldBackupService
         $this->saveSettings();
     }
 
+    /**
+     * @return int
+     */
+    public function getDays(): int
+    {
+        return Value::getInt(self::DAYS, $this->settings, 1);
+    }
+
+    /**
+     * @param int $days
+     */
+    public function setDays(int $days): void
+    {
+        $this->settings[self::DAYS] = max(self::DAYS_MIN, min(self::DAYS_MAX, $days));
+        $this->saveSettings();
+    }
 }

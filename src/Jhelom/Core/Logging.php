@@ -24,7 +24,7 @@ class Logging
      */
     static public function debug(string $message, ... $args): void
     {
-        self::getLogger()->debug(TextFormat::GRAY . StringFormat::formatEx($message, $args));
+        self::getLogger()->debug(StringFormat::formatEx($message, $args));
     }
 
     /**

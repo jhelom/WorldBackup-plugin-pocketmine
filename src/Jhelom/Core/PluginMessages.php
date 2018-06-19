@@ -17,9 +17,13 @@ abstract class PluginMessages
     /**
      * @param string $path
      */
-    static public function load(string $path): void
+    final static public function load(string $path): void
     {
-        self::$messages = (new Config($path, Config::YAML, []))->getAll();
+        if (is_file($path)) {
+            self::$messages = (new Config($path, Config::YAML, []))->getAll();
+        } else {
+            Logging::warning('File not found. "{0}"', $path);
+        }
     }
 
 
@@ -28,9 +32,10 @@ abstract class PluginMessages
      * @param mixed|null ...$args
      * @return string
      */
-    static protected function _getMessage(string $key, ... $args): string
+    final static protected function _getMessage(string $key, ... $args): string
     {
         if (!array_key_exists($key, self::$messages)) {
+            Logging::warning('Message not found. "{0}"', $key);
             return TextFormat::RED . $key . ': ' . join(', ', $args);
         }
 
