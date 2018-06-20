@@ -62,7 +62,7 @@ class Main extends PluginBaseEx implements Listener
 
         // messages
 
-        $this->messages = new Messages($this, $this->getAvailableMessagePath());
+        $this->messages = new Messages($this, $this->getAvailableMessageFilePath());
 
         // restore
 

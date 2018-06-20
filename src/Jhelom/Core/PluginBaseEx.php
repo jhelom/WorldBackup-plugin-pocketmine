@@ -66,12 +66,12 @@ abstract class PluginBaseEx extends PluginBase
      * @param string $lang
      * @return string
      */
-    protected function getMessagesPath(string $lang): string
+    protected function getMessageFilePath(string $lang): string
     {
         return $this->getDataFolder() . 'messages.' . $lang . '.yml';
     }
 
-    protected function getAvailableMessagePath(): string
+    protected function getAvailableMessageFilePath(): string
     {
         $languages = [
             $this->getServer()->getLanguage()->getLang(),
@@ -79,7 +79,7 @@ abstract class PluginBaseEx extends PluginBase
         ];
 
         foreach ($languages as $lang) {
-            $path = $this->getMessagesPath($lang);
+            $path = $this->getMessageFilePath($lang);
 
             if (is_file($path)) {
                 return $path;
