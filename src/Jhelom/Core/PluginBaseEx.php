@@ -71,6 +71,9 @@ abstract class PluginBaseEx extends PluginBase
         return $this->getDataFolder() . 'messages.' . $lang . '.yml';
     }
 
+    /**
+     * @return string
+     */
     protected function getAvailableMessageFilePath(): string
     {
         $languages = [

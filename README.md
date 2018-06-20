@@ -63,6 +63,23 @@ If the number of histories backed up exceeds the upper limit, it will be deleted
 wbackup set days [int]
 ```
 
+exsamples)
+
+Backup at 1 day interval 30 history (about 1 month)
+
+```
+wbackup set days 1
+wbackup set limit 30
+```
+
+
+Backup at weekly interval 15 histories (about 3 months)
+
+```
+wbackup set days 7
+wbackup set limit 15
+```
+
 ---
 
 
@@ -70,9 +87,10 @@ wbackup set days [int]
 
 ワールドのバックアップと復元ができる PocketMine-MP のプラグインです。
 
-毎日１日１回、全ワールドを自動でバックアップします。
+全ワールドを自動でバックアップします。
 
-バックアップは世代管理できます。
+バックアップする間隔と世代数は任意に設定できます。
+
 
 
 ## コマンド
@@ -134,6 +152,20 @@ wbackup set limit [int]
 
 ```
 wbackup set days [int]
+```
+
+設定例）
+
+1日毎で30世代の場合（約1か月分）
+```
+wbackup set days 1
+wbackup set limit 30
+```
+
+1週間毎で15世代の場合（約3か月分）
+```
+wbackup set days 7
+wbackup set limit 15
 ```
 
 # 構成
