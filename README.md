@@ -1,8 +1,18 @@
 # World Backup
 
+[![PoggitCI Badge](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)
+
+---
+
+Select Language: [English](#eng), [日本語](#jpn)
+
+---
 
 ![console](https://github.com/jhelom/WorldBackup-plugin-pocketmine/blob/develop/assets/console.png)
 
+---
+
+<a name="eng"></a>
 # English
 
 This is PocketMine-MP Plugin. 
@@ -85,6 +95,7 @@ wbackup set limit 15
 ---
 
 
+<a name="eng"></a>
 # 日本語
 
 ワールドのバックアップと復元ができる PocketMine-MP のプラグインです。
