@@ -1,6 +1,6 @@
 # World Backup
 
-[![PoggitCI Badge](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)
+[![PoggitCI Badge](https://poggit.pmmp.io/ci.badge/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)
 
 ---
 
