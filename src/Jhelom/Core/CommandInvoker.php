@@ -18,12 +18,12 @@ abstract class CommandInvoker extends PluginCommand implements CommandExecutor
 {
     /**
      * CommandInvoker constructor.
-     * @param string $name
+     * @param string $commandName
      * @param Plugin $plugin
      */
-    public function __construct(string $name, Plugin $plugin)
+    public function __construct(string $commandName, Plugin $plugin)
     {
-        parent::__construct($name, $plugin);
+        parent::__construct($commandName, $plugin);
         $this->setExecutor($this);
     }
 

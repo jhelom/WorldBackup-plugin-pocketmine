@@ -10,9 +10,9 @@ use Jhelom\Core\ISupportedLanguage;
 use Jhelom\Core\PluginBaseEx;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
 use Jhelom\WorldBackup\Services\WorldBackupService;
-use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
 use pocketmine\scheduler\Task;
+use pocketmine\utils\TextFormat;
 
 /**
  * Class Main
@@ -20,8 +20,7 @@ use pocketmine\scheduler\Task;
  */
 class Main extends PluginBaseEx implements Listener
 {
-    private const PLUGIN_DOWNLOAD_URL_DOMAIN = 'https://github.com';
-    private const PLUGIN_DOWNLOAD_URL_PATH = '/jhelom/WorldBackup-plugin-pocketmine/releases';
+    private const PLUGIN_UPDATE_URL = 'https://github.com/jhelom/WorldBackup-plugin-pocketmine/releases';
 
     /** @var WorldBackupService */
     private $backupService;
@@ -32,21 +31,38 @@ class Main extends PluginBaseEx implements Listener
     /** @var Task */
     private $task;
 
+    /** @var ICalendar */
+    private $calendar;
+
     public function onLoad()
     {
         parent::onLoad();
 
-        $this->backupService = new WorldBackupService($this);
+        $this->saveDefaultConfig();
+        $this->reloadConfig();
+
+        $isDebug = $this->getConfig()->get('debug', false);
+
+        if ($isDebug) {
+            $colors = [
+                TextFormat::GREEN,
+                TextFormat::AQUA,
+                TextFormat::BLUE,
+                TextFormat::DARK_PURPLE,
+                TextFormat::RED
+            ];
+
+            foreach ($colors as $color) {
+                $this->getLogger()->warning($color . '*** DEBUG MODE ***');
+            }
+        }
+
+        $this->calendar = $isDebug ? new TestCalendar($this) : new Calendar();
+        $this->backupService = new WorldBackupService($this, $this->calendar);
 
         // messages
 
-        $message_file = $this->getMessagesPath($this->getServer()->getLanguage()->getLang());
-
-        if (!is_file($message_file)) {
-            $message_file = $this->getMessagesPath(ISupportedLanguage::ENGLISH);
-        }
-
-        $this->messages = new Messages($this->getLogger(), $message_file);
+        $this->messages = new Messages($this, $this->getAvailableMessageFilePath());
 
         // restore
 
@@ -65,7 +81,7 @@ class Main extends PluginBaseEx implements Listener
         // task
 
         $this->task = new TimerTask($this);
-        $interval = 1200 * 60 * 12; // 1 minutes * 60 * 12 = 12 hour
+        $interval = $this->calendar->getInterval();
 
         // TODO: scheduler
         if (method_exists($this, 'getScheduler')) {
@@ -79,14 +95,6 @@ class Main extends PluginBaseEx implements Listener
         // register
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-    }
-
-    /**
-     * @param LevelLoadEvent $event
-     */
-    public function onLevelLoad(LevelLoadEvent $event)
-    {
-        $this->getLogger()->debug('LevelLoadEvent: ' . $event->getLevel()->getName());
     }
 
     /**
@@ -115,21 +123,6 @@ class Main extends PluginBaseEx implements Listener
         ];
     }
 
-    /**
-     * @return string
-     */
-    protected function getPluginUpdateUrlDomain(): string
-    {
-        return self::PLUGIN_DOWNLOAD_URL_DOMAIN;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getPluginUpdateUrlPath(): string
-    {
-        return self::PLUGIN_DOWNLOAD_URL_PATH;
-    }
 
     /**
      * @return string[]
@@ -140,6 +133,14 @@ class Main extends PluginBaseEx implements Listener
             ISupportedLanguage::ENGLISH,
             ISupportedLanguage::JAPANESE
         ];
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getPluginUpdateUrl(): ?string
+    {
+        return self::PLUGIN_UPDATE_URL;
     }
 }
 

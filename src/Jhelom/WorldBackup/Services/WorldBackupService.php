@@ -6,10 +6,11 @@ namespace Jhelom\WorldBackup\Services;
 
 use DateTimeImmutable;
 use Exception;
-use Jhelom\Core\CustomLogger;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\ServiceException;
+use Jhelom\Core\StringFormat;
 use Jhelom\Core\Value;
+use Jhelom\WorldBackup\ICalendar;
 use Jhelom\WorldBackup\Main;
 use pocketmine\Server;
 
@@ -31,21 +32,24 @@ class WorldBackupService
     private const DAYS = 'days';
     private const DAYS_MIN = 1;
     private const DAYS_MAX = 999;
-    private const DATE_FORMAT = 'Y-m-d';
 
     private $settings = [];
 
+    /** @var Main */
     private $main;
-    private $logger;
+
+    /** @var ICalendar */
+    private $calendar;
 
     /**
      * WorldBackupService constructor.
      * @param Main $main
+     * @param ICalendar $calendar
      */
-    public function __construct(Main $main)
+    public function __construct(Main $main, ICalendar $calendar)
     {
         $this->main = $main;
-        $this->logger = new CustomLogger($main->getLogger());
+        $this->calendar = $calendar;
         $this->loadSettings();
     }
 
@@ -76,34 +80,40 @@ class WorldBackupService
      */
     public function autoBackup(): bool
     {
-        $today = new DateTimeImmutable();
-        $this->logger->debug('today = {0}', $today->format(self::DATE_FORMAT));
+        $today = $this->calendar->getToday();
+        $this->main->getLogger()->debug(StringFormat::format('today = {0}', $today->format(ICalendar::DATE_FORMAT)));
 
         $s = Value::getString(self::LAST_BACKUP, $this->settings, '2000-01-01');
-        $this->logger->debug('last str = {0}', $s);
+        $this->main->getLogger()->debug(StringFormat::format('last backup string = {0}', $s));
 
-        $last = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $s);
+        $last = DateTimeImmutable::createFromFormat(ICalendar::DATE_FORMAT, $s);
 
         if ($last !== false) {
-            $this->logger->debug('last  = {0}', $last->format(self::DATE_FORMAT));
-
+            $this->main->getLogger()->debug(StringFormat::format('last backup date   = {0}', $last->format(ICalendar::DATE_FORMAT)));
             $diff = $today->diff($last);
-
-            $this->logger->debug('diff days = {0}', $diff->days);
+            $this->main->getLogger()->debug(StringFormat::format('diff days = {0}', $diff->days));
 
             if ($diff->days < $this->getDays()) {
                 return false;
             }
         }
 
-        $this->logger->info($this->main->getMessages()->autoBackupStart());
+        $this->main->getLogger()->info($this->main->getMessages()->autoBackupStart());
 
         $this->backupAll();
-        $this->settings[self::LAST_BACKUP] = $today->format(self::DATE_FORMAT);
+        $this->settings[self::LAST_BACKUP] = $today->format(ICalendar::DATE_FORMAT);
         $this->saveSettings();
 
-        $this->logger->info($this->main->getMessages()->autoBackupEnd());
+        $this->main->getLogger()->info($this->main->getMessages()->autoBackupEnd());
         return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDays(): int
+    {
+        return Value::getInt(self::DAYS, $this->settings, 1);
     }
 
     /**
@@ -165,7 +175,7 @@ class WorldBackupService
         $this->notExistsWorldSourceIfThrow($world);
         $sourceDir = $this->getWorldSourceFolder($world);
 
-        $history = date(self::DATE_FORMAT);
+        $history = $this->calendar->getToday()->format(ICalendar::DATE_FORMAT);
         $backupDir = $this->getHistoryFolder($world, $history);
 
         if ($overwrite === false) {
@@ -280,7 +290,7 @@ class WorldBackupService
         }
 
         if (!is_dir($dstDir)) {
-            $this->logger->debug('make directory. "{0}"', $dstDir);
+            $this->main->getLogger()->debug(StringFormat::format('make directory. "{0}"', $dstDir));
             mkdir($dstDir, 0755, true);
         }
 
@@ -293,7 +303,7 @@ class WorldBackupService
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
                 copy($srcFile, $dstFile);
-                $this->logger->debug('copy file. {0} => {1}', $srcFile, $dstFile);
+                $this->main->getLogger()->debug(StringFormat::format('copy file. {0} => {1}', $srcFile, $dstFile));
             }
         }
     }
@@ -373,12 +383,12 @@ class WorldBackupService
             if (is_dir($target)) {
                 $this->deleteDirectories($target);
             } else if (is_file($target)) {
-                $this->logger->debug('delete file. "{0}"', $target);
+                $this->main->getLogger()->debug(StringFormat::format('delete file. "{0}"', $target));
                 unlink($target);
             }
         }
 
-        $this->logger->debug('delete directory. "{0}"', $dir);
+        $this->main->getLogger()->debug(StringFormat::format('delete directory. "{0}"', $dir));
         rmdir($dir);
     }
 
@@ -474,12 +484,12 @@ class WorldBackupService
                 return;
             }
 
-            $this->logger->info($this->main->getMessages()->restoreStart($world, $history));
+            $this->main->getLogger()->info($this->main->getMessages()->restoreStart($world, $history));
             $this->backup($world, false);
             $this->restore($world, $history);
-            $this->logger->info($this->main->getMessages()->restoreCompleted($world, $history));
+            $this->main->getLogger()->info($this->main->getMessages()->restoreCompleted($world, $history));
         } catch (Exception $e) {
-            $this->logger->logException($e);
+            $this->main->getLogger()->logException($e);
         } finally {
             $this->settings[self::RESTORE_WORLD] = '';
             $this->settings[self::RESTORE_HISTORY] = '';
@@ -533,14 +543,6 @@ class WorldBackupService
         $this->settings[self::RESTORE_WORLD] = '';
         $this->settings[self::RESTORE_HISTORY] = '';
         $this->saveSettings();
-    }
-
-    /**
-     * @return int
-     */
-    public function getDays(): int
-    {
-        return Value::getInt(self::DAYS, $this->settings, 1);
     }
 
     /**

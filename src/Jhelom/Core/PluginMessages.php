@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Jhelom\Core;
 
-use Logger;
+
+use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
@@ -13,23 +14,24 @@ use pocketmine\utils\TextFormat;
  */
 abstract class PluginMessages
 {
-    /** @var CustomLogger */
-    protected $logger;
     private $messages = [];
+
+    /** @var Plugin */
+    private $plugin;
 
     /**
      * PluginMessages constructor.
+     * @param Plugin $plugin
      * @param string $path
-     * @param Logger $logger
      */
-    public function __construct(Logger $logger, string $path)
+    public function __construct(Plugin $plugin, string $path)
     {
-        $this->logger = new CustomLogger($logger);
+        $this->plugin = $plugin;
 
         if (is_file($path)) {
             $this->messages = (new Config($path, Config::YAML, []))->getAll();
         } else {
-            $this->logger->warning('File not found. "{0}"', $path);
+            $this->plugin->getLogger()->error(StringFormat::format('messages(yml) not found. "{0}"', $path));
         }
     }
 
@@ -41,7 +43,7 @@ abstract class PluginMessages
     final protected function _getMessage(string $key, ... $args): string
     {
         if (!array_key_exists($key, $this->messages)) {
-            $this->logger->warning('Message not found. "{0}"', $key);
+            $this->plugin->getLogger()->warning(StringFormat::format('Message not found. "{0}"', $key));
             return TextFormat::RED . $key . ': ' . join(', ', $args);
         }
 
