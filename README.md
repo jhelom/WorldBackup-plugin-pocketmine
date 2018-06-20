@@ -5,11 +5,13 @@
 
 # English
 
-This PocketMine-MP Plugin supports Backup and Restore World data.
+This is PocketMine-MP Plugin. 
 
-Back up all the world automatically every day.
+Manage backup and restoration of world data.
 
-The history of the backup is recorded.
+Automatic backup with customizable schedule. Every day, weekly, monthly etc.
+
+Backup History Rotated and archived.
 
 ## Commands
 
