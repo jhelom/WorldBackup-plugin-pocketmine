@@ -6,9 +6,9 @@ namespace Jhelom\WorldBackup\Services;
 
 use DateTimeImmutable;
 use Exception;
-use Jhelom\Core\CustomLogger;
 use Jhelom\Core\JsonFile;
 use Jhelom\Core\ServiceException;
+use Jhelom\Core\StringFormat;
 use Jhelom\Core\Value;
 use Jhelom\WorldBackup\ICalendar;
 use Jhelom\WorldBackup\Main;
@@ -38,9 +38,6 @@ class WorldBackupService
     /** @var Main */
     private $main;
 
-    /** @var CustomLogger */
-    private $logger;
-
     /** @var ICalendar */
     private $calendar;
 
@@ -53,7 +50,6 @@ class WorldBackupService
     {
         $this->main = $main;
         $this->calendar = $calendar;
-        $this->logger = new CustomLogger($main->getLogger());
         $this->loadSettings();
     }
 
@@ -85,30 +81,30 @@ class WorldBackupService
     public function autoBackup(): bool
     {
         $today = $this->calendar->getToday();
-        $this->logger->debug('today = {0}', $today->format(ICalendar::DATE_FORMAT));
+        $this->main->getLogger()->debug(StringFormat::format('today = {0}', $today->format(ICalendar::DATE_FORMAT)));
 
         $s = Value::getString(self::LAST_BACKUP, $this->settings, '2000-01-01');
-        $this->logger->debug('last backup string = {0}', $s);
+        $this->main->getLogger()->debug(StringFormat::format('last backup string = {0}', $s));
 
         $last = DateTimeImmutable::createFromFormat(ICalendar::DATE_FORMAT, $s);
 
         if ($last !== false) {
-            $this->logger->debug('last backup date   = {0}', $last->format(ICalendar::DATE_FORMAT));
+            $this->main->getLogger()->debug(StringFormat::format('last backup date   = {0}', $last->format(ICalendar::DATE_FORMAT)));
             $diff = $today->diff($last);
-            $this->logger->debug('diff days = {0}', $diff->days);
+            $this->main->getLogger()->debug(StringFormat::format('diff days = {0}', $diff->days));
 
             if ($diff->days < $this->getDays()) {
                 return false;
             }
         }
 
-        $this->logger->info($this->main->getMessages()->autoBackupStart());
+        $this->main->getLogger()->info($this->main->getMessages()->autoBackupStart());
 
         $this->backupAll();
         $this->settings[self::LAST_BACKUP] = $today->format(ICalendar::DATE_FORMAT);
         $this->saveSettings();
 
-        $this->logger->info($this->main->getMessages()->autoBackupEnd());
+        $this->main->getLogger()->info($this->main->getMessages()->autoBackupEnd());
         return true;
     }
 
@@ -294,7 +290,7 @@ class WorldBackupService
         }
 
         if (!is_dir($dstDir)) {
-            $this->logger->debug('make directory. "{0}"', $dstDir);
+            $this->main->getLogger()->debug(StringFormat::format('make directory. "{0}"', $dstDir));
             mkdir($dstDir, 0755, true);
         }
 
@@ -307,7 +303,7 @@ class WorldBackupService
                 $srcFile = $srcDir . DIRECTORY_SEPARATOR . $name;
                 $dstFile = $dstDir . DIRECTORY_SEPARATOR . $name;
                 copy($srcFile, $dstFile);
-                $this->logger->debug('copy file. {0} => {1}', $srcFile, $dstFile);
+                $this->main->getLogger()->debug(StringFormat::format('copy file. {0} => {1}', $srcFile, $dstFile));
             }
         }
     }
@@ -387,12 +383,12 @@ class WorldBackupService
             if (is_dir($target)) {
                 $this->deleteDirectories($target);
             } else if (is_file($target)) {
-                $this->logger->debug('delete file. "{0}"', $target);
+                $this->main->getLogger()->debug(StringFormat::format('delete file. "{0}"', $target));
                 unlink($target);
             }
         }
 
-        $this->logger->debug('delete directory. "{0}"', $dir);
+        $this->main->getLogger()->debug(StringFormat::format('delete directory. "{0}"', $dir));
         rmdir($dir);
     }
 
@@ -488,12 +484,12 @@ class WorldBackupService
                 return;
             }
 
-            $this->logger->info($this->main->getMessages()->restoreStart($world, $history));
+            $this->main->getLogger()->info($this->main->getMessages()->restoreStart($world, $history));
             $this->backup($world, false);
             $this->restore($world, $history);
-            $this->logger->info($this->main->getMessages()->restoreCompleted($world, $history));
+            $this->main->getLogger()->info($this->main->getMessages()->restoreCompleted($world, $history));
         } catch (Exception $e) {
-            $this->logger->logException($e);
+            $this->main->getLogger()->logException($e);
         } finally {
             $this->settings[self::RESTORE_WORLD] = '';
             $this->settings[self::RESTORE_HISTORY] = '';

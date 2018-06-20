@@ -12,9 +12,12 @@ use pocketmine\plugin\Plugin;
  */
 class TestCalendar implements ICalendar
 {
-
+    /** @var Plugin */
     private $plugin;
+
+    /** @var int */
     private $counter = 0;
+    private $offsetDays = 0;
 
     /**
      * TestCalendar constructor.
@@ -31,9 +34,16 @@ class TestCalendar implements ICalendar
      */
     public function getToday(): DateTimeImmutable
     {
-        $now = new DateTimeImmutable();
-        $today = $now->modify('+' . $this->counter . ' days');
         $this->counter++;
+
+        if ($this->counter > 10) {
+            $this->offsetDays++;
+            $this->counter = 0;
+        }
+
+        $now = new DateTimeImmutable();
+        $today = $now->modify('+' . $this->offsetDays . ' days');
+
 
         $this->plugin->getLogger()->warning('TEST CALENDAR :' . $today->format(ICalendar::DATE_FORMAT));
 

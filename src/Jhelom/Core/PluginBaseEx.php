@@ -22,8 +22,12 @@ abstract class PluginBaseEx extends PluginBase
             mkdir($dir, 0755, true);
         }
 
-        $updater = new PluginUpdater($this, $this->getPluginUpdateUrlDomain(), $this->getPluginUpdateUrlPath());
-        $updater->update();
+        $url = $this->getPluginUpdateUrl();
+
+        if (!is_null($url)) {
+            $updater = new PluginUpdater($this, $url);
+            $updater->update();
+        }
 
         foreach ($this->getSupportedLanguages() as $lang) {
             $this->saveResource('messages.' . $lang . '.yml', true);
@@ -48,19 +52,15 @@ abstract class PluginBaseEx extends PluginBase
     abstract protected function setupCommands(): array;
 
     /**
-     * @return string
+     * @return string|null
      */
-    abstract protected function getPluginUpdateUrlDomain(): string;
-
-    /**
-     * @return string
-     */
-    abstract protected function getPluginUpdateUrlPath(): string;
+    abstract protected function getPluginUpdateUrl(): ?string;
 
     /**
      * @return string[]
      */
     abstract protected function getSupportedLanguages(): array;
+
 
     /**
      * @param string $lang
@@ -69,5 +69,23 @@ abstract class PluginBaseEx extends PluginBase
     protected function getMessagesPath(string $lang): string
     {
         return $this->getDataFolder() . 'messages.' . $lang . '.yml';
+    }
+
+    protected function getAvailableMessagePath(): string
+    {
+        $languages = [
+            $this->getServer()->getLanguage()->getLang(),
+            ISupportedLanguage::ENGLISH
+        ];
+
+        foreach ($languages as $lang) {
+            $path = $this->getMessagesPath($lang);
+
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        return '';
     }
 }
