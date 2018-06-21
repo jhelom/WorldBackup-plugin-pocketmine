@@ -1,0 +1,3 @@
+[submodule "src\\Jhelom\\Core"]
+	path = src\\Jhelom\\Core
+	url = https://github.com/jhelom/PluginCore-pocketmine.git
