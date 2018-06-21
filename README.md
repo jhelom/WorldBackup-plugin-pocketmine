@@ -12,12 +12,12 @@ Select Language: [English](#eng), [日本語](#jpn)
 
 ---
 
-<a name="eng"></a>
+<a id="eng" name="eng"></a>
 # English
 
 This is PocketMine-MP Plugin. 
 
-Manage backup and restoration of world data.
+Management backup and restore of world data.
 
 Automatic backup with customizable schedule. Every day, weekly, monthly etc.
 
@@ -95,7 +95,7 @@ wbackup set limit 15
 ---
 
 
-<a name="eng"></a>
+<a id=jpn" name="jpn"></a>
 # 日本語
 
 ワールドのバックアップと復元ができる PocketMine-MP のプラグインです。
