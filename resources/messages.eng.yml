@@ -17,7 +17,7 @@ world-not-found: '§cWorld not found. "{0}"'
 world-invalid: '§cInvalid world.'
 
 history-invalid: '§cInvalid history.'
-history-required: '§cHistory required.'
+history-required: '§cHistory required. ex) yyyy-mm-dd'
 history-not-found: '§cHistory not found. World="{0}", History="{1}".'
 history-list: 'Backup Histories of "{0}"'
 
