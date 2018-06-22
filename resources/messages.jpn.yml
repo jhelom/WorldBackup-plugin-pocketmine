@@ -2,7 +2,7 @@ command-execute-on-console: '§cこのコマンドはサーバーコンソール
 
 description: 'ワールドのバックアップと復元'
 
-help1: '=== World Backup コマンドヘルプ ==='
+help1: '=== World BackupSubCommand コマンドヘルプ ==='
 help2: '§a/wbackup list §f: 一覧を見る'
 help3: '§a/wbackup backup [world] §f: バックアップする'
 help4: '§a/wbackup restore [world] [yyyy-mm-dd] §f: 復元する'

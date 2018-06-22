@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Jhelom\WorldBackup;
 
 
-use Jhelom\Core\PluginMessages;
+use Jhelom\WorldBackup\Libs\PluginMessages;
 
 /**
  * Class Messages
@@ -17,7 +17,7 @@ class Messages extends PluginMessages
      */
     public function commandDescription(): string
     {
-        return $this->_getMessage('description');
+        return $this->_get('description');
     }
 
     /**
@@ -25,7 +25,7 @@ class Messages extends PluginMessages
      */
     public function worldRequired(): string
     {
-        return $this->_getMessage('world-required');
+        return $this->_get('world-required');
     }
 
     /**
@@ -33,7 +33,7 @@ class Messages extends PluginMessages
      */
     public function worldInvalid(): string
     {
-        return $this->_getMessage('world-invalid');
+        return $this->_get('world-invalid');
     }
 
     /**
@@ -42,7 +42,7 @@ class Messages extends PluginMessages
      */
     public function backupCompleted(string $world): string
     {
-        return $this->_getMessage('backup-completed', $world);
+        return $this->_get('backup-completed', $world);
     }
 
     /**
@@ -50,7 +50,7 @@ class Messages extends PluginMessages
      */
     public function clearRestore(): string
     {
-        return $this->_getMessage('restore-clear');
+        return $this->_get('restore-clear');
     }
 
     /**
@@ -58,7 +58,7 @@ class Messages extends PluginMessages
      */
     public function historyRequired(): string
     {
-        return $this->_getMessage('history-required');
+        return $this->_get('history-required');
     }
 
     /**
@@ -68,7 +68,7 @@ class Messages extends PluginMessages
      */
     public function restorePlan(string $world, string $history): string
     {
-        return $this->_getMessage('restore-plan', $world, $history);
+        return $this->_get('restore-plan', $world, $history);
     }
 
     /**
@@ -78,7 +78,7 @@ class Messages extends PluginMessages
      */
     public function restoreStart(string $world, string $history): string
     {
-        return $this->_getMessage('restore-start', $world, $history);
+        return $this->_get('restore-start', $world, $history);
     }
 
     /**
@@ -88,7 +88,7 @@ class Messages extends PluginMessages
      */
     public function restoreCompleted(string $world, string $history): string
     {
-        return $this->_getMessage('restore-completed', $world, $history);
+        return $this->_get('restore-completed', $world, $history);
     }
 
     /**
@@ -97,7 +97,7 @@ class Messages extends PluginMessages
      */
     public function historyList(string $world): string
     {
-        return $this->_getMessage('history-list', $world);
+        return $this->_get('history-list', $world);
     }
 
     /**
@@ -105,7 +105,7 @@ class Messages extends PluginMessages
      */
     public function setLimitInvalid(): string
     {
-        return $this->_getMessage('set-limit-invalid');
+        return $this->_get('set-limit-invalid');
     }
 
     /**
@@ -114,7 +114,7 @@ class Messages extends PluginMessages
      */
     public function setLimitCompleted(int $limit): string
     {
-        return $this->_getMessage('set-limit-completed', $limit);
+        return $this->_get('set-limit-completed', $limit);
     }
 
     /**
@@ -123,7 +123,7 @@ class Messages extends PluginMessages
      */
     public function setDaysCompleted(int $days): string
     {
-        return $this->_getMessage('set-days-completed', $days);
+        return $this->_get('set-days-completed', $days);
     }
 
     /**
@@ -132,7 +132,7 @@ class Messages extends PluginMessages
      */
     public function setDays(int $days): string
     {
-        return $this->_getMessage('set-days', $days);
+        return $this->_get('set-days', $days);
     }
 
     /**
@@ -140,7 +140,7 @@ class Messages extends PluginMessages
      */
     public function setDaysInvalid(): string
     {
-        return $this->_getMessage('set-days-invalid');
+        return $this->_get('set-days-invalid');
     }
 
     /**
@@ -149,7 +149,7 @@ class Messages extends PluginMessages
      */
     public function setLimit(int $limit): string
     {
-        return $this->_getMessage('set-limit', $limit);
+        return $this->_get('set-limit', $limit);
     }
 
     /**
@@ -157,7 +157,7 @@ class Messages extends PluginMessages
      */
     public function showSettings(): string
     {
-        return $this->_getMessage('show-settings');
+        return $this->_get('show-settings');
     }
 
     /**
@@ -166,15 +166,15 @@ class Messages extends PluginMessages
     public function help(): array
     {
         return [
-            $this->_getMessage('help1'),
-            $this->_getMessage('help2'),
-            $this->_getMessage('help3'),
-            $this->_getMessage('help4'),
-            $this->_getMessage('help5'),
-            $this->_getMessage('help6'),
-            $this->_getMessage('help7'),
-            $this->_getMessage('help8'),
-            $this->_getMessage('help9'),
+            $this->_get('help1'),
+            $this->_get('help2'),
+            $this->_get('help3'),
+            $this->_get('help4'),
+            $this->_get('help5'),
+            $this->_get('help6'),
+            $this->_get('help7'),
+            $this->_get('help8'),
+            $this->_get('help9'),
         ];
     }
 
@@ -183,7 +183,7 @@ class Messages extends PluginMessages
      */
     public function autoBackupStart(): string
     {
-        return $this->_getMessage('auto-backup-start');
+        return $this->_get('auto-backup-start');
     }
 
     /**
@@ -191,7 +191,7 @@ class Messages extends PluginMessages
      */
     public function autoBackupEnd(): string
     {
-        return $this->_getMessage('auto-backup-end');
+        return $this->_get('auto-backup-end');
     }
 
     /**
@@ -200,7 +200,7 @@ class Messages extends PluginMessages
      */
     public function worldNotFound(string $world): string
     {
-        return $this->_getMessage('world-not-found', $world);
+        return $this->_get('world-not-found', $world);
     }
 
     /**
@@ -210,7 +210,7 @@ class Messages extends PluginMessages
      */
     public function historyNotFound(string $world, string $history): string
     {
-        return $this->_getMessage('history-not-found', $world, $history);
+        return $this->_get('history-not-found', $world, $history);
     }
 
     /**
@@ -218,7 +218,7 @@ class Messages extends PluginMessages
      */
     public function historyInvalid(): string
     {
-        return $this->_getMessage('history-invalid');
+        return $this->_get('history-invalid');
     }
 
     /**
@@ -226,6 +226,6 @@ class Messages extends PluginMessages
      */
     public function executeOnConsole(): string
     {
-        return $this->_getMessage('command-execute-on-console');
+        return $this->_get('command-execute-on-console');
     }
 }
