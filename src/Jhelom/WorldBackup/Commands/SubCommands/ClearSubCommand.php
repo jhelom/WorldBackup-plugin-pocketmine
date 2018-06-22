@@ -23,16 +23,6 @@ use pocketmine\Player;
 class ClearSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'clear';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -41,12 +31,12 @@ class ClearSubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
             return;
         }
 
-        $this->main->getBackupService()->clearRestore();
-        $sender->sendMessage($this->main->getMessages()->clearRestore());
+        Main::getInstance()->getBackupService()->clearRestore();
+        $sender->sendMessage(Main::getInstance()->getMessages()->clearRestore());
     }
 
     /**

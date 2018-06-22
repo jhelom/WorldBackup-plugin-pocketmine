@@ -23,16 +23,6 @@ use pocketmine\Player;
 class BackupSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'backup';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -42,11 +32,11 @@ class BackupSubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
         } else {
             $world = $args->getString();
-            $this->main->getBackupService()->backup($world);
-            $sender->sendMessage($this->main->getMessages()->backupCompleted($world));
+            Main::getInstance()->getBackupService()->backup($world);
+            $sender->sendMessage(Main::getInstance()->getMessages()->backupCompleted($world));
         }
     }
 

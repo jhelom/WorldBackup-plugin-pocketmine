@@ -18,16 +18,6 @@ use pocketmine\command\CommandSender;
 class SetLimitSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'limit';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -39,11 +29,11 @@ class SetLimitSubCommand extends SubCommand
         $limit = $args->getInt();
 
         if (!is_numeric($limit)) {
-            throw new CommandInvokeException($this->main->getMessages()->setLimitInvalid());
+            throw new CommandInvokeException(Main::getInstance()->getMessages()->setLimitInvalid());
         }
 
-        $this->main->getBackupService()->setHistoryLimit($limit);
-        $sender->sendMessage($this->main->getMessages()->setLimitCompleted($this->main->getBackupService()->getHistoryLimit()));
+        Main::getInstance()->getBackupService()->setHistoryLimit($limit);
+        $sender->sendMessage(Main::getInstance()->getMessages()->setLimitCompleted(Main::getInstance()->getBackupService()->getHistoryLimit()));
     }
 
     /**

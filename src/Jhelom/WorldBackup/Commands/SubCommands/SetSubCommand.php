@@ -23,18 +23,15 @@ use pocketmine\Player;
 class SetSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'set';
-    private $main;
 
     /**
-     * BackupSubCommand constructor.
-     * @param Main $main
+     * SetSubCommand constructor.
      * @throws \Exception
      */
-    public function __construct(Main $main)
+    public function __construct()
     {
-        $this->main = $main;
-        $this->addSubCommand(new SetLimitSubCommand($main));
-        $this->addSubCommand(new SetDaysSubCommand($main));
+        $this->addSubCommand(new SetLimitSubCommand());
+        $this->addSubCommand(new SetDaysSubCommand());
     }
 
     /**
@@ -44,15 +41,15 @@ class SetSubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
             return;
         }
 
-        $service = $this->main->getBackupService();
+        $service = Main::getInstance()->getBackupService();
 
-        $sender->sendMessage($this->main->getMessages()->showSettings());
-        $sender->sendMessage($this->main->getMessages()->setLimit($service->getHistoryLimit()));
-        $sender->sendMessage($this->main->getMessages()->setDays($service->getDays()));
+        $sender->sendMessage(Main::getInstance()->getMessages()->showSettings());
+        $sender->sendMessage(Main::getInstance()->getMessages()->setLimit($service->getHistoryLimit()));
+        $sender->sendMessage(Main::getInstance()->getMessages()->setDays($service->getDays()));
     }
 
     /**

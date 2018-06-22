@@ -23,16 +23,6 @@ use pocketmine\Player;
 class HistorySubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'history';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -42,15 +32,15 @@ class HistorySubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
             return;
         }
 
         $world = $args->getString('');
-        $service = $this->main->getBackupService();
+        $service = Main::getInstance()->getBackupService();
         $histories = $service->getHistories($world);
 
-        $sender->sendMessage($this->main->getMessages()->historyList($world));
+        $sender->sendMessage(Main::getInstance()->getMessages()->historyList($world));
         $sender->sendMessage('+-----+------------------+');
         $sender->sendMessage('| No. | BACKUP DATE      |');
         $sender->sendMessage('+-----+------------------+');

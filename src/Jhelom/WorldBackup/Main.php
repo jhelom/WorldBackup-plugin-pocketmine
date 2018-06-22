@@ -34,8 +34,19 @@ class Main extends PluginBaseEx implements Listener
     /** @var ICalendar */
     private $calendar;
 
+    static private $instance;
+
+    /**
+     * @return Main
+     */
+    static public function getInstance(): Main
+    {
+        return self::$instance;
+    }
+
     public function onLoad()
     {
+        self::$instance = $this;
         parent::onLoad();
 
         $this->saveDefaultConfig();

@@ -23,16 +23,6 @@ use pocketmine\Player;
 class ListSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'list';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -42,11 +32,11 @@ class ListSubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
             return;
         }
 
-        $service = $this->main->getBackupService();
+        $service = Main::getInstance()->getBackupService();
         $worlds = $service->getBackupWorlds();
 
         $sender->sendMessage('+-----------------+------------------+---------+');

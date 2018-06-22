@@ -38,12 +38,12 @@ class WorldBackupCommand extends PluginCommandEx
         $this->setDescription($this->main->getMessages()->commandDescription());
         $this->setPermission('Jhelom.command.wbackup');
 
-        $this->addSubCommand(new BackupSubCommand($main));
-        $this->addSubCommand(new ClearSubCommand($main));
-        $this->addSubCommand(new HistorySubCommand($main));
-        $this->addSubCommand(new RestoreSubCommand($main));
-        $this->addSubCommand(new SetSubCommand($main));
-        $this->addSubCommand(new ListSubCommand($main));
+        $this->addSubCommand(new BackupSubCommand());
+        $this->addSubCommand(new ClearSubCommand());
+        $this->addSubCommand(new HistorySubCommand());
+        $this->addSubCommand(new RestoreSubCommand());
+        $this->addSubCommand(new SetSubCommand());
+        $this->addSubCommand(new ListSubCommand());
     }
 
     /**

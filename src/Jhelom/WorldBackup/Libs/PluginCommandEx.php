@@ -20,12 +20,12 @@ abstract class PluginCommandEx extends PluginCommand implements CommandExecutor,
 
     /**
      * PluginCommandEx constructor.
-     * @param string $commandName
+     * @param string $name
      * @param Plugin $plugin
      */
-    public function __construct(string $commandName, Plugin $plugin)
+    public function __construct(string $name, Plugin $plugin)
     {
-        parent::__construct($commandName, $plugin);
+        parent::__construct($name, $plugin);
         $this->setExecutor($this);
     }
 
@@ -40,7 +40,7 @@ abstract class PluginCommandEx extends PluginCommand implements CommandExecutor,
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
         try {
-            $this->dispatchSubCommand($sender, new CommandArguments($args));
+            $this->dispatch($sender, new CommandArguments($args));
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (CommandInvokeException | ServiceException $e) {
             $sender->sendMessage(TextFormat::RED . $e->getMessage());
         }

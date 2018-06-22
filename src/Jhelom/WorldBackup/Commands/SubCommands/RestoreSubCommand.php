@@ -18,16 +18,6 @@ use pocketmine\Player;
 class RestoreSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'restore';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -37,7 +27,7 @@ class RestoreSubCommand extends SubCommand
     function onInvoke(CommandSender $sender, CommandArguments $args): void
     {
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->main->getMessages()->executeOnConsole());
+            $sender->sendMessage(Main::getInstance()->getMessages()->executeOnConsole());
             return;
         }
 
@@ -45,23 +35,23 @@ class RestoreSubCommand extends SubCommand
         $history = $args->getString();
 
         try {
-            $this->main->getBackupService()->notExistsWorldBackupIfThrow($world);
+            Main::getInstance()->getBackupService()->notExistsWorldBackupIfThrow($world);
         } catch (ServiceException $e) {
             $sender->sendMessage($e->getMessage());
-            (new ListSubCommand($this->main))->onInvoke($sender, $args);
+            (new ListSubCommand())->onInvoke($sender, $args);
             return;
         }
 
         try {
-            $this->main->getBackupService()->notExistsHistoryIfThrow($world, $history);
+            Main::getInstance()->getBackupService()->notExistsHistoryIfThrow($world, $history);
         } catch (ServiceException $e) {
             $sender->sendMessage($e->getMessage());
-            (new HistorySubCommand($this->main))->onInvoke($sender, new CommandArguments([$world]));
+            (new HistorySubCommand())->onInvoke($sender, new CommandArguments([$world]));
             return;
         }
 
-        $this->main->getBackupService()->restorePlan($world, $history);
-        $sender->sendMessage($this->main->getMessages()->restorePlan($world, $history));
+        Main::getInstance()->getBackupService()->restorePlan($world, $history);
+        $sender->sendMessage(Main::getInstance()->getMessages()->restorePlan($world, $history));
     }
 
     /**

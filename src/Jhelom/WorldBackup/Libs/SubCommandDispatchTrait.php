@@ -35,7 +35,7 @@ trait SubCommandDispatchTrait
      * @param CommandArguments $args
      * @return void
      */
-    public function dispatchSubCommand(CommandSender $sender, CommandArguments $args): void
+    public function dispatch(CommandSender $sender, CommandArguments $args): void
     {
         $command = $args->peek();
 
@@ -50,7 +50,7 @@ trait SubCommandDispatchTrait
             $subCommand = $this->subCommands[$command];
             if ($subCommand instanceof SubCommand) {
                 $args->stripFirst();
-                $subCommand->dispatchSubCommand($sender, $args);
+                $subCommand->dispatch($sender, $args);
             }
         } else {
             $this->onInvoke($sender, $args);

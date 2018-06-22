@@ -31,5 +31,5 @@ interface ICommandInvoker
      * @param CommandSender $sender
      * @param CommandArguments $args
      */
-    public function dispatchSubCommand(CommandSender $sender, CommandArguments $args): void;
+    public function dispatch(CommandSender $sender, CommandArguments $args): void;
 }

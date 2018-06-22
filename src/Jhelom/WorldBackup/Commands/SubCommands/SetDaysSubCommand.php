@@ -18,16 +18,6 @@ use pocketmine\command\CommandSender;
 class SetDaysSubCommand extends SubCommand
 {
     private const COMMAND_NAME = 'days';
-    private $main;
-
-    /**
-     * BackupSubCommand constructor.
-     * @param Main $main
-     */
-    public function __construct(Main $main)
-    {
-        $this->main = $main;
-    }
 
     /**
      * @param CommandSender $sender
@@ -39,11 +29,11 @@ class SetDaysSubCommand extends SubCommand
         $days = $args->getInt();
 
         if (!is_numeric($days)) {
-            throw new CommandInvokeException($this->main->getMessages()->setDaysInvalid());
+            throw new CommandInvokeException(Main::getInstance()->getMessages()->setDaysInvalid());
         }
 
-        $this->main->getBackupService()->setDays($days);
-        $sender->sendMessage($this->main->getMessages()->setDaysCompleted($this->main->getBackupService()->getDays()));
+        Main::getInstance()->getBackupService()->setDays($days);
+        $sender->sendMessage(Main::getInstance()->getMessages()->setDaysCompleted(Main::getInstance()->getBackupService()->getDays()));
     }
 
     /**
