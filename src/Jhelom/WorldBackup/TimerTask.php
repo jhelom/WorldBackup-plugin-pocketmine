@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Jhelom\WorldBackup;
 
-use Jhelom\Core\ServiceException;
+use Jhelom\WorldBackup\Libs\ServiceException;
 use pocketmine\scheduler\Task;
 
 /**

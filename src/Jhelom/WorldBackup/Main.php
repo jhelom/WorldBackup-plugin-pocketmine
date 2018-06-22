@@ -5,10 +5,10 @@ namespace Jhelom\WorldBackup;
 
 
 use Exception;
-use Jhelom\Core\CommandInvoker;
-use Jhelom\Core\ISupportedLanguage;
-use Jhelom\Core\PluginBaseEx;
 use Jhelom\WorldBackup\Commands\WorldBackupCommand;
+use Jhelom\WorldBackup\Libs\ISupportedLanguage;
+use Jhelom\WorldBackup\Libs\PluginBaseEx;
+use Jhelom\WorldBackup\Libs\PluginCommandEx;
 use Jhelom\WorldBackup\Services\WorldBackupService;
 use pocketmine\event\Listener;
 use pocketmine\scheduler\Task;
@@ -114,7 +114,8 @@ class Main extends PluginBaseEx implements Listener
     }
 
     /**
-     * @return CommandInvoker[]
+     * @return PluginCommandEx[]
+     * @throws Exception
      */
     protected function setupCommands(): array
     {
