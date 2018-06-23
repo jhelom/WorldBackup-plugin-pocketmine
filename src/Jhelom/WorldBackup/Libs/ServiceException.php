@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 
 use Exception;
 
 /**
  * Class ServiceException
- * @package Jhelom\Core
  */
 class ServiceException extends Exception
 {

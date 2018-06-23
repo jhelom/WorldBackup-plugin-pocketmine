@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 
 use pocketmine\plugin\Plugin;
@@ -10,7 +10,6 @@ use pocketmine\utils\TextFormat;
 
 /**
  * Class PluginMessages
- * @package Jhelom\Core
  */
 abstract class PluginMessages
 {
@@ -40,7 +39,7 @@ abstract class PluginMessages
      * @param mixed|null ...$args
      * @return string
      */
-    final protected function _getMessage(string $key, ... $args): string
+    final protected function _get(string $key, ... $args): string
     {
         if (!array_key_exists($key, $this->messages)) {
             $this->plugin->getLogger()->warning(StringFormat::format('Message not found. "{0}"', $key));

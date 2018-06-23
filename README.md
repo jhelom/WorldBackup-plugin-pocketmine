@@ -1,15 +1,27 @@
 # World Backup
 
+[![PoggitCI Badge](https://poggit.pmmp.io/ci.badge/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)](https://poggit.pmmp.io/ci/jhelom/WorldBackup-plugin-pocketmine/WorldBackup)
+
+---
+
+Select Language: [English](#eng), [日本語](#jpn)
+
+---
 
 ![console](https://github.com/jhelom/WorldBackup-plugin-pocketmine/blob/develop/assets/console.png)
 
+---
+
+<a id="eng" name="eng"></a>
 # English
 
-This PocketMine-MP Plugin supports Backup and Restore World data.
+This is PocketMine-MP Plugin. 
 
-Back up all the world automatically every day.
+Management backup and restore of world data.
 
-The history of the backup is recorded.
+Automatic backup with customizable schedule. Every day, weekly, monthly etc.
+
+Backup History Rotated and archived.
 
 ## Commands
 
@@ -83,6 +95,7 @@ wbackup set limit 15
 ---
 
 
+<a id=jpn" name="jpn"></a>
 # 日本語
 
 ワールドのバックアップと復元ができる PocketMine-MP のプラグインです。

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
+
 
 use pocketmine\plugin\PluginBase;
 
 /**
  * Class PluginBaseEx
- * @package Jhelom\Core
  */
 abstract class PluginBaseEx extends PluginBase
 {
@@ -34,23 +34,6 @@ abstract class PluginBaseEx extends PluginBase
         }
     }
 
-    public function onEnable()
-    {
-        $this->getLogger()->debug('onEnable');
-        parent::onEnable();
-
-        foreach ($this->setupCommands() as $command) {
-            if ($command instanceof CommandInvoker) {
-                $this->getServer()->getCommandMap()->register($command->getName(), $command);
-            }
-        }
-    }
-
-    /**
-     * @return CommandInvoker[]
-     */
-    abstract protected function setupCommands(): array;
-
     /**
      * @return string|null
      */
@@ -61,15 +44,22 @@ abstract class PluginBaseEx extends PluginBase
      */
     abstract protected function getSupportedLanguages(): array;
 
+    public function onEnable()
+    {
+        $this->getLogger()->debug('onEnable');
+        parent::onEnable();
+
+        foreach ($this->setupCommands() as $command) {
+            if ($command instanceof PluginCommandEx) {
+                $this->getServer()->getCommandMap()->register($command->getName(), $command);
+            }
+        }
+    }
 
     /**
-     * @param string $lang
-     * @return string
+     * @return PluginCommandEx[]
      */
-    protected function getMessageFilePath(string $lang): string
-    {
-        return $this->getDataFolder() . 'messages.' . $lang . '.yml';
-    }
+    abstract protected function setupCommands(): array;
 
     /**
      * @return string
@@ -90,5 +80,14 @@ abstract class PluginBaseEx extends PluginBase
         }
 
         return '';
+    }
+
+    /**
+     * @param string $lang
+     * @return string
+     */
+    protected function getMessageFilePath(string $lang): string
+    {
+        return $this->getDataFolder() . 'messages.' . $lang . '.yml';
     }
 }

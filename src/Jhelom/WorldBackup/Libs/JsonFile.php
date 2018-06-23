@@ -1,24 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 /**
  * Class JsonFile
- * @package Jhelom\Core
  */
 class JsonFile
 {
-    /**
-     * @param string $path
-     * @param $data
-     */
-    static public function save(string $path, $data): void
-    {
-        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        file_put_contents($path, $json);
-    }
-
     /**
      * @param string $path
      * @param null $default
@@ -33,5 +22,15 @@ class JsonFile
             self::save($path, $default);
             return $default;
         }
+    }
+
+    /**
+     * @param string $path
+     * @param $data
+     */
+    static public function save(string $path, $data): void
+    {
+        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        file_put_contents($path, $json);
     }
 }

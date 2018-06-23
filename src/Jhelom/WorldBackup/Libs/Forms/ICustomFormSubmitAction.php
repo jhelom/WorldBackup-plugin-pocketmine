@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core\Forms;
+namespace Jhelom\WorldBackup\Libs\Forms;
 
 
 use pocketmine\Player;
@@ -9,7 +9,6 @@ use pocketmine\Player;
 
 /**
  * Interface ICustomFormSubmitAction
- * @package Jhelom\Core\Forms
  */
 interface ICustomFormSubmitAction
 {

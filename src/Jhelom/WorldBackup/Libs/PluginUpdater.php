@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 use Exception;
 use pocketmine\plugin\Plugin;
@@ -9,7 +9,6 @@ use pocketmine\plugin\Plugin;
 
 /**
  * Class PluginUpdater
- * @package Jhelom\Core
  */
 class PluginUpdater
 {
@@ -84,48 +83,36 @@ class PluginUpdater
                 return;
             }
 
-            $currentVersion = str_replace(' ', '_', $this->plugin->getDescription()->getFullName()) . '.phar';
-            $this->plugin->getLogger()->info($this->getMessage('check', $currentVersion));
+            $currentFile = str_replace(' ', '_', $this->plugin->getDescription()->getFullName()) . '.phar';
+            $this->plugin->getLogger()->info($this->getMessage('check', $currentFile));
 
             $this->settings[self::LAST_CHECK_DATE] = $now;
             $html = $this->getHtml();
             $result = $this->parseHtml($html);
 
             if (is_null($result)) {
-                $this->plugin->getLogger()->info($this->getMessage('latest', $currentVersion));
+                $this->plugin->getLogger()->info($this->getMessage('latest', $currentFile));
                 return;
             }
 
             $downloadUrl = $this->urlDomain . $result;
-            $downloadVersion = $this->parseFilename($downloadUrl);
+            $downloadFile = $this->parseFilename($downloadUrl);
 
-            if (is_null($downloadVersion)) {
-                $this->plugin->getLogger()->info($this->getMessage('latest', $currentVersion));
+            if (is_null($downloadFile)) {
+                $this->plugin->getLogger()->info($this->getMessage('latest', $currentFile));
                 return;
             }
 
-            if ($currentVersion == $downloadVersion) {
-                $this->plugin->getLogger()->info($this->getMessage('latest', $currentVersion));
+            $currentVersion = $this->parseVersion($currentFile);
+            $downloadVersion = $this->parseVersion($downloadFile);
+
+            $this->plugin->getLogger()->debug(StringFormat::format('current version  = {0}', implode('.', $currentVersion)));
+            $this->plugin->getLogger()->debug(StringFormat::format('download version = {0}', implode('.', $downloadVersion)));
+
+            if ($this->isOutdated($currentVersion, $downloadVersion)) {
+                $this->downloadNewVersion($currentFile, $downloadFile, $downloadUrl);
             } else {
-                $this->plugin->getLogger()->info($this->getMessage('outdated', $currentVersion, $downloadVersion));
-                $save_path = $this->downloadDirectory . DIRECTORY_SEPARATOR . $downloadVersion;
-
-                $this->plugin->getLogger()->info($this->getMessage('download_start', $downloadVersion));
-                $this->download($downloadUrl, $save_path);
-                $this->plugin->getLogger()->info($this->getMessage('download_end', $downloadVersion));
-
-                $old_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $currentVersion;
-                $new_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $downloadVersion;
-
-                if (is_file($old_plugin_path)) {
-                    unlink($old_plugin_path);
-                    $this->plugin->getLogger()->info($this->getMessage('deleted', $currentVersion));
-                }
-
-                rename($save_path, $new_plugin_path);
-                $this->plugin->getLogger()->info($this->getMessage('updated', $downloadVersion));
-
-                $this->settings[self::DOWNLOAD_VERSION] = $downloadVersion;
+                $this->plugin->getLogger()->info($this->getMessage('latest', $currentFile));
             }
 
             $this->saveSettings();
@@ -136,28 +123,24 @@ class PluginUpdater
 
     private function loadSettings(): void
     {
-        $filename = $this->getSettingsFilename();
-
-        if (is_file($filename)) {
-            $json = file_get_contents($filename);
-            $this->settings = json_decode($json, true);
-        }
+        $path = $this->getSettingsFilePath();
+        $this->settings = JsonFile::load($path);
     }
 
     /**
      * @return string
      */
-    private function getSettingsFilename(): string
+    private function getSettingsFilePath(): string
     {
         return $this->downloadDirectory . DIRECTORY_SEPARATOR . 'updater.json';
     }
 
     /**
      * @param string $key
-     * @param string ...$args
+     * @param mixed ...$args
      * @return string
      */
-    private function getMessage(string $key, string... $args): string
+    private function getMessage(string $key, ... $args): string
     {
         $lang = $this->plugin->getServer()->getLanguage()->getLang();
 
@@ -226,6 +209,78 @@ class PluginUpdater
     }
 
     /**
+     * @param string $filename
+     * @return int[]
+     */
+    private function parseVersion(string $filename): array
+    {
+        if (preg_match('/_v([0-9\.]+[0-9]+)/', $filename, $matches)) {
+            $ss = explode('.', $matches[1]);
+            $numbers = [];
+
+            foreach ($ss as $s) {
+                $numbers[] = intval($s);
+            }
+
+            return $numbers;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * @param int[] $currentVersion
+     * @param int[] $downloadVersion
+     * @return bool
+     */
+    private function isOutdated(array $currentVersion, array $downloadVersion): bool
+    {
+        $max = max(count($currentVersion), count($downloadVersion));
+
+        for ($i = 0; $i < $max; $i++) {
+            $currentVersion[] = 0;
+            $downloadVersion[] = 0;
+        }
+
+        foreach ($currentVersion as $cur) {
+            $tar = array_shift($downloadVersion);
+
+            if ($cur < $tar) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $currentFile
+     * @param string $downloadFile
+     * @param string $downloadUrl
+     */
+    private function downloadNewVersion(string $currentFile, string $downloadFile, string $downloadUrl): void
+    {
+        $this->plugin->getLogger()->info($this->getMessage('outdated', $currentFile, $downloadFile));
+        $save_path = $this->downloadDirectory . DIRECTORY_SEPARATOR . $downloadFile;
+        $this->plugin->getLogger()->info($this->getMessage('download_start', $downloadFile));
+        $this->download($downloadUrl, $save_path);
+        $this->plugin->getLogger()->info($this->getMessage('download_end', $downloadFile));
+
+        $old_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $currentFile;
+        $new_plugin_path = $this->plugin->getServer()->getDataPath() . 'plugins' . DIRECTORY_SEPARATOR . $downloadFile;
+
+        if (is_file($old_plugin_path)) {
+            unlink($old_plugin_path);
+            $this->plugin->getLogger()->info($this->getMessage('deleted', $currentFile));
+        }
+
+        rename($save_path, $new_plugin_path);
+        $this->plugin->getLogger()->info($this->getMessage('updated', $downloadFile));
+
+        $this->settings[self::DOWNLOAD_VERSION] = $downloadFile;
+    }
+
+    /**
      * @param string $downloadUrl
      * @param string $savePath
      */
@@ -253,9 +308,8 @@ class PluginUpdater
 
     private function saveSettings(): void
     {
-        $filename = $this->getSettingsFilename();
-        $json = json_encode($this->settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        file_put_contents($filename, $json);
+        $path = $this->getSettingsFilePath();
+        JsonFile::save($path, $this->settings);
     }
 }
 

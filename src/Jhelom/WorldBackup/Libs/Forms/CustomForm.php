@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core\Forms;
+namespace Jhelom\WorldBackup\Libs\Forms;
 
 
 use pocketmine\Player;
 
 /**
  * Class CustomForm
- * @package Jhelom\Core\Forms
  */
 class CustomForm extends Form
 {

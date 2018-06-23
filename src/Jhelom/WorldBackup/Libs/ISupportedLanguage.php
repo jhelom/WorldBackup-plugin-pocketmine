@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 
 /**
  * Interface ISupportedLanguage
- * @package Jhelom\Core
  */
 interface ISupportedLanguage
 {

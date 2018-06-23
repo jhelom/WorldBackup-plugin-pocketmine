@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 /**
  * Class Value
- * @package Jhelom\Core
  */
 class Value
 {

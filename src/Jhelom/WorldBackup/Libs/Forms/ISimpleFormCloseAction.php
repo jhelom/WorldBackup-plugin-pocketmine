@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core\Forms;
+namespace Jhelom\WorldBackup\Libs\Forms;
 
 
 use pocketmine\Player;
 
 /**
  * Interface ISimpleFormCloseAction
- * @package Jhelom\Core\Forms
  */
 interface ISimpleFormCloseAction
 {

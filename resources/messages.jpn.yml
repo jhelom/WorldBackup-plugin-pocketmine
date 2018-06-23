@@ -2,7 +2,7 @@ command-execute-on-console: '§cこのコマンドはサーバーコンソール
 
 description: 'ワールドのバックアップと復元'
 
-help1: '=== World Backup コマンドヘルプ ==='
+help1: '=== World BackupSubCommand コマンドヘルプ ==='
 help2: '§a/wbackup list §f: 一覧を見る'
 help3: '§a/wbackup backup [world] §f: バックアップする'
 help4: '§a/wbackup restore [world] [yyyy-mm-dd] §f: 復元する'
@@ -17,7 +17,7 @@ world-not-found: '§cワールド "{0}" は存在しません。'
 world-invalid: '§cワールド名が認識できません。'
 
 history-invalid: '§cバックアック履歴が認識できません。'
-history-required: '§c履歴を指定してください。'
+history-required: '§c履歴を yyyy-mm-dd で指定してください。'
 history-not-found: '§cワールド "{0}" のバックアック履歴 "{1}" が存在しません。'
 history-list: 'ワールド "{0}" のバックアップ履歴一覧'
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core\Forms;
+namespace Jhelom\WorldBackup\Libs\Forms;
 
 
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -11,7 +11,6 @@ use pocketmine\Player;
 
 /**
  * Class Form
- * @package Jhelom\Core\Forms
  */
 abstract class Form
 {

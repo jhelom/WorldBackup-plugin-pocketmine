@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Jhelom\Core;
+namespace Jhelom\WorldBackup\Libs;
 
 
 /**
  * Class CommandArguments
- * @package Jhelom\Core
  */
 class CommandArguments
 {
@@ -86,7 +85,7 @@ class CommandArguments
      * @param bool $default
      * @return bool|null
      */
-    public function getBool(bool $default = false): ?bool
+    public function getBool(bool $default = null): ?bool
     {
         $value = array_shift($this->values);
 
@@ -108,5 +107,18 @@ class CommandArguments
             default:
                 return $default;
         }
+    }
+
+    /**
+     * @return null|string
+     */
+    public function peek(): ?string
+    {
+        return count($this->values) === 0 ? null : $this->values[0];
+    }
+
+    public function stripFirst(): void
+    {
+        array_shift($this->values);
     }
 }
