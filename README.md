@@ -1,8 +1,8 @@
 # World Backup
 
-<a href="https://poggit.pmmp.io/p/WorldBackup"><img src="https://poggit.pmmp.io/shield.state/WorldBackup"></a>
+[![](https://poggit.pmmp.io/shield.state/WorldBackup)](https://poggit.pmmp.io/p/WorldBackup)
 
-<a href="https://poggit.pmmp.io/p/WorldBackup"><img src="https://poggit.pmmp.io/shield.api/WorldBackup"></a>
+[![](https://poggit.pmmp.io/shield.api/WorldBackup)](https://poggit.pmmp.io/p/WorldBackup)
 
 ---
 
