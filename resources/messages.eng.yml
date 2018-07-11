@@ -1,8 +1,8 @@
 command-execute-on-console: '§cthis command execute on server console.'
 
-description: 'World BackupSubCommand and Restore'
+description: 'World and Restore'
 
-help1: '=== World BackupSubCommand Command Help ==='
+help1: '=== World Backup Command Help ==='
 help2: '§a/wbackup list §f: List of Worlds.'
 help3: '§a/wbackup backup [world] §f: Backup.'
 help4: '§a/wbackup restore [world] [yyyy-mm-dd] §f: Restore'
@@ -19,7 +19,7 @@ world-invalid: '§cInvalid world.'
 history-invalid: '§cInvalid history.'
 history-required: '§cHistory required. ex) yyyy-mm-dd'
 history-not-found: '§cHistory not found. World="{0}", History="{1}".'
-history-list: 'BackupSubCommand Histories of "{0}"'
+history-list: 'Histories of "{0}"'
 
 backup-completed: '§aWorld "{0}" backup has been completed.'
 
@@ -27,7 +27,7 @@ set-limit: 'History Limit = {0}'
 set-limit-invalid: '§cHistory limit required.'
 set-limit-completed: '§aBackup history limit has been set to {0}.'
 
-set-days: 'BackupSubCommand Cycle = {0} days.'
+set-days: 'Cycle = {0} days.'
 set-days-invalid: '§cBackup Cycle days required.'
 set-days-completed: '§aBackup Cycle has been set to {0} days.'
 
@@ -39,4 +39,4 @@ restore-clear: '§aRestore was canceled.'
 auto-backup-start: '§aAutomatic backup of all the world started.'
 auto-backup-end: '§aAutomatic backup of all the world has been completed.'
 
-show-settings: '=== BackupSubCommand Settings ==='
+show-settings: '=== Backup Settings ==='
