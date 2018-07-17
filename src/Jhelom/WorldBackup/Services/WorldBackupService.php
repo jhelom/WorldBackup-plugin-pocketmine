@@ -122,7 +122,11 @@ class WorldBackupService
     public function backupAll(): void
     {
         foreach ($this->getSourceWorlds() as $world) {
-            $this->backup($world);
+            try {
+                $this->backup($world);
+            } catch (Exception $e) {
+                Main::getInstance()->getLogger()->logException($e);
+            }
         }
     }
 
